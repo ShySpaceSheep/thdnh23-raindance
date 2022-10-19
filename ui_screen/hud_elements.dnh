@@ -1,0 +1,173 @@
+#include "script/libraries/commons/graphicstd_funcs.dnh"
+#include "./ui_update_tasks.dnh"
+
+let assets = "./../../assets/";
+InstallFont(assets ~ "fonts/Revue.ttf");
+InstallFont(assets ~ "fonts/Russell Square Regular.ttf");
+
+task DrawInitialHUD {
+    RenderSTGFrame;
+    DrawDifficultyText;
+    DrawFPSCounter;
+}
+
+task DrawPlayerHUD {
+    DrawHighScore;
+    DrawScore;
+    DrawGraze;
+    DrawPlayerLives;
+    DrawPlayerSpells;
+    DrawPointValue;
+    DrawPlayerPower;
+}
+
+task DrawBossHUD {
+    DrawBossName;
+    DrawBossTimer;
+    //DrawBossLife;
+}
+
+task RenderSTGFrame {
+    let texturePath = assets ~ "img/Default_SystemBackground.png";
+    let stgFrame = Create2DSpriteA1(texturePath, BLEND_ALPHA, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
+    //SetStgFrame(120.5, 15, 515, 464, 20, 80);
+}
+
+task DrawDifficultyText {
+    let difficultyText;
+    function DrawDifficultyText(text, x, y, borderColorR, borderColorG, borderColorB) {
+        difficultyText = CreateTextA2(text, "Revue", 18, false, x, y, 255, 255, 255, borderColorR, borderColorG, borderColorB, 2, 1.0);
+    }
+
+    alternative(GetCommonData("sessionDifficulty", 0))
+    case(0) {
+        DrawDifficultyText("EASY", 200, 40, 17, 174, 17);
+    } case(1) {
+        DrawDifficultyText("NORMAL", 180, 40, 71, 62, 255);
+    } case(2) {
+        DrawDifficultyText("HARD", 195, 40, 225, 29, 29);
+    } case(3) {
+        DrawDifficultyText("LUNATIC", 184, 40, 227, 36, 220);
+    } case(4) {
+        DrawDifficultyText("EXTRA", 193, 40, 225, 29, 29);
+    } case(5) {
+        DrawDifficultyText("OVERDRIVE", 170, 40, 227, 36, 220);
+    } others {
+        DrawDifficultyText("?????", 200, 40, 225, 29, 29);
+    }
+    AnimateAndPlace(difficultyText);
+}
+
+task DrawFPSCounter {
+    let fpsCounterTxt = CreateTextA2("...", "Russell Square", 10, false, 0, GetScreenHeight() - 15, 255, 255, 255, 0, 0 , 0, 2, 1.0);
+    ObjText_SetMaxWidth(fpsCounterTxt, GetScreenWidth() - 8);
+    ObjText_SetHorizontalAlignment(fpsCounterTxt, ALIGNMENT_RIGHT);
+    UpdateFPS(fpsCounterTxt);
+}
+
+task DrawHighScore {
+    let digitCount = 9;
+    let highScoreTxt = CreateTextA2("HiScore", "Russell Square", 16, true, 424, 48, 255, 255, 255, 0, 0, 0, 3, 0.01);
+    let sprDigitList = Create2DSpriteList(assets ~ "img/spr_thdigits.png", BLEND_ALPHA, 0, 48, 0.75, 0.75, 1, 0.01);
+    Create2DSpriteA2(assets ~ "img/testbar.png", BLEND_ALPHA, 0, 0, 256, 14, 0, 0, 256, 14, 420, 65, 0.85, 0.5, 1, 85, 0.90);
+    UpdateHighScore(digitCount, sprDigitList);
+}
+
+task DrawScore {
+    let digitCount = 9;
+    let scoreTxt = CreateTextA2("Score", "Russell Square", 16, true, 424, 73, 255, 255, 255, 0, 0, 0, 3, 0.01);
+    let sprDigitList = Create2DSpriteList(assets ~ "img/spr_thdigits.png", BLEND_ALPHA, 0, 73, 0.75, 0.75, 1, 0.01);
+    Create2DSpriteA2(assets ~ "img/testbar.png", BLEND_ALPHA, 0, 0, 256, 14, 0, 0, 256, 14, 420, 90, 0.85, 0.5, 1, 85, 0.90);
+    UpdateScore(digitCount, sprDigitList);
+}
+
+task DrawPlayerPower {
+    let powerText = CreateTextA2("Power", "Russell Square", 16, true, 436, 175, 236, 111, 84, 0, 0, 0, 3, 0.01);
+}
+
+task DrawPointValue {
+    let valueText = CreateTextA2("Value", "Russell Square", 16, true, 436, 195, 84, 139, 236, 0, 0, 0, 3, 0.01);
+}
+
+task DrawGraze {
+    let digitCount = 5;
+    let grazeText = CreateTextA2("Graze", "Russell Square", 16, true, 436, 215, 210, 210, 210, 0, 0, 0, 3, 0.01);
+    let sprDigitList = Create2DSpriteList(assets ~ "img/spr_thdigits.png", BLEND_ALPHA, 0, 217, 0.75, 0.75, 1, 0.01);
+    UpdateGraze(digitCount, sprDigitList);
+}
+
+task DrawPlayerLives {
+    let livesGraphic = [];
+    let maxLivesCount = 8;
+    let livesTxt = CreateTextA2("Lives", "Russell Square", 15, true, 424, 115, 227, 36, 220, 0, 0, 0, 2, 0.01);
+    Create2DSpriteA3(assets ~ "img/testbar.png", BLEND_ALPHA, 0, 0, 256, 14, 0, 0, 256, 14, 420, 129, 0.85, 0.5, 1, 85, 17, 174, 85, 0.90);
+
+    ascent(i in 0..maxLivesCount) {
+        let sprLife = Create2DSpriteA2(assets ~ "img/playerLifeSpell.png", BLEND_ALPHA, 0, 0, 34, 34, 0, 0, 34, 34, 494 + (i * 17), 113, 0.6, 0.6, 1, 255, 1.0);
+        livesGraphic = livesGraphic ~ [sprLife];
+    }
+    UpdatePlayerCount(livesGraphic);
+}
+
+task DrawPlayerSpells {
+    let spellsGraphic = [];
+    let maxSpellCount = 8;
+    let spellsTxt = CreateTextA2("Spell", "Russell Square", 15, true, 424, 145, 37, 234, 37, 0, 0, 0, 2, 0.01);
+    Create2DSpriteA3(assets ~ "img/testbar.png", BLEND_ALPHA, 0, 0, 256, 14, 0, 0, 256, 14, 420, 159, 0.85, 0.5, 1, 125, 227, 36, 85, 0.90);
+
+    ascent(i in 0..maxSpellCount) {
+        let sprSpell = Create2DSpriteA2(assets ~ "img/playerLifeSpell.png", BLEND_ALPHA, 0, 39, 35, 72, 0, 39, 35, 72, 494 + (i * 17), 118, 0.6, 0.6, 1, 255, 1.0);
+        spellsGraphic = spellsGraphic ~ [sprSpell];
+    }
+    UpdateSpellCount(spellsGraphic);
+}
+
+task DrawBossName {
+    let bossNameText = CreateTextA1("", "Russell Square", 13, false, 38, 22, 15, 196, 54, 1.0);
+    ObjText_SetFontColorBottom(bossNameText, 10, 136, 0);
+    UpdateBossName(bossNameText);
+}
+
+task DrawBossTimer {
+
+}
+
+task AnimateAndPlace(difficultyText) {
+    let textAlpha = 255;
+    let textScalableY = 0;
+    ObjRender_SetAlpha(difficultyText, textAlpha);
+    ObjRender_SetScaleY(difficultyText, textScalableY);
+
+    loop(10) {
+        ObjRender_SetScaleY(difficultyText, textScalableY);
+        textScalableY += 0.12;
+        yield;
+    }
+    loop(3){yield;}
+    loop(4) {
+        ObjRender_SetAlpha(difficultyText, 0);
+        loop(4){yield;}
+        ObjRender_SetAlpha(difficultyText, 255);
+        loop(4){yield;}
+    }
+    loop(70){yield;}
+    loop(15) {
+        ObjRender_SetScaleY(difficultyText, textScalableY);
+        ObjRender_SetAlpha(difficultyText, textAlpha);
+        textScalableY -= 0.12;
+        textAlpha -= 25;
+        yield;
+    }
+
+    textScalableY = 0;
+    loop(15) {
+        ObjRender_SetAlpha(difficultyText, 255);
+        // TODO: Alternative cases for each difficulty regarding placement on the sidebar.
+        ObjRender_SetX(difficultyText, 483);
+        ObjRender_SetY(difficultyText, 18);
+        ObjRender_SetScaleY(difficultyText, textScalableY);
+
+        textScalableY += 0.075;
+        yield;
+    }
+}

@@ -1,0 +1,27 @@
+#include "./ui_screen/hud_elements.dnh"
+
+SetPauseScriptPath("script/ui_screen/pause_screen.dnh");
+SetEndSceneScriptPath("script/ui_screen/end_screen.dnh");
+SetReplaySaveSceneScriptPath("script/ui_screen/replay_saver");
+StartScript(LoadScript("script/ui_screen/stage_backgrounds.dnh"));
+
+@Initialize {
+    DrawInitialHUD;
+    DrawPlayerHUD;
+    DrawBossHUD;
+}
+
+@Event {
+    alternative(GetEventType())
+    case(EV_START_BOSS_SPELL) {
+        StartScript(LoadScript("script/ui_screen/magic_circle.dnh"));
+    } case (EV_GAIN_SPELL) {
+        let currentScene = GetEnemyBossSceneObjectID();
+        let spellScore = ObjEnemyBossScene_GetInfo(currentScene, INFO_SPELL_SCORE);
+		//TGainSpell(spellScore);
+    }
+}
+
+@MainLoop {
+    yield;
+}

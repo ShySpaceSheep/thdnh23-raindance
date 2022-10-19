@@ -1,0 +1,228 @@
+local {
+	let current = GetCurrentScriptDirectory();
+	let path = current ~ "../data/shot_data.dnh";
+	LoadEnemyShotData(path);
+}
+
+// Constants For Tiny Balls
+let T_BALL_W = 1;
+let T_BALL_R = 2;
+let T_BALL_O = 3;
+let T_BALL_Y = 4;
+let T_BALL_G = 5;
+let T_BALL_B = 6;
+let T_BALL_P = 7;
+let T_BALL_S = 8;
+
+// Constants For Small Balls
+let S_BALL_W = 9;
+let S_BALL_R = 10;
+let S_BALL_O = 11;
+let S_BALL_Y = 12;
+let S_BALL_G = 13;
+let S_BALL_B = 14;
+let S_BALL_P = 15;
+let S_BALL_S = 16;
+
+// Constants For Small Ringed Balls
+let S_RBALL_W = 17;
+let S_RBALL_R = 18;
+let S_RBALL_O = 19;
+let S_RBALL_Y = 20;
+let S_RBALL_G = 21;
+let S_RBALL_B = 22;
+let S_RBALL_P = 23;
+let S_RBALL_S = 24;
+
+// Constants For Medium Balls
+let M_BALL_W = 25;
+let M_BALL_R = 26;
+let M_BALL_O = 27;
+let M_BALL_Y = 28;
+let M_BALL_G = 29;
+let M_BALL_B = 30;
+let M_BALL_P = 31;
+let M_BALL_S = 32;
+
+// Constants For Small Rice Bullets
+let S_RICE_W = 33;
+let S_RICE_R = 34;
+let S_RICE_O = 35;
+let S_RICE_Y = 36;
+let S_RICE_G = 37;
+let S_RICE_B = 38;
+let S_RICE_P = 39;
+let S_RICE_S = 40;
+
+// Constants For Small Ice Bullets
+let ICE_W = 41;
+let ICE_R = 42;
+let ICE_O = 43;
+let ICE_Y = 44;
+let ICE_G = 45;
+let ICE_B = 46;
+let ICE_P = 47;
+let ICE_S = 48;
+
+// Constants For Literal Bullet Bullets
+let BULLET_W = 49;
+let BULLET_R = 50;
+let BULLET_O = 51;
+let BULLET_Y = 52;
+let BULLET_G = 53;
+let BULLET_B = 54;
+let BULLET_P = 55;
+let BULLET_S = 56;
+
+// Constants For Large Rice Bullets
+let L_RICE_W = 57;
+let L_RICE_R = 58;
+let L_RICE_O = 59;
+let L_RICE_Y = 60;
+let L_RICE_G = 61;
+let L_RICE_B = 62;
+let L_RICE_P = 63;
+let L_RICE_S = 64;
+
+// Constants For Small Knife Bullets (Apparently "Kunai")
+let KUNAI_W = 65;
+let KUNAI_R = 66;
+let KUNAI_O = 67;
+let KUNAI_Y = 68;
+let KUNAI_G = 69;
+let KUNAI_B = 70;
+let KUNAI_P = 71;
+let KUNAI_S = 72;
+
+// Constants For Scale Bullets
+let SCALE_W = 73;
+let SCALE_R = 74;
+let SCALE_O = 75;
+let SCALE_Y = 76;
+let SCALE_G = 77;
+let SCALE_B = 78;
+let SCALE_P = 79;
+let SCALE_S = 80;
+
+// Constants For Amulet Bullets
+let AMULET_W = 81;
+let AMULET_R = 82;
+let AMULET_O = 83;
+let AMULET_Y = 84;
+let AMULET_G = 85;
+let AMULET_B = 86;
+let AMULET_P = 87;
+let AMULET_S = 88;
+
+// Constants For Butterfly Bullets
+let BUTTERFLY_W = 89;
+let BUTTERFLY_R = 90;
+let BUTTERFLY_O = 91;
+let BUTTERFLY_Y = 92;
+let BUTTERFLY_G = 93;
+let BUTTERFLY_B = 94;
+let BUTTERFLY_P = 95;
+let BUTTERFLY_S = 96;
+
+// Constants For Small Star Bullets
+let S_STAR_W = 97;
+let S_STAR_R = 98;
+let S_STAR_O = 99;
+let S_STAR_Y = 100;
+let S_STAR_G = 101;
+let S_STAR_B = 102;
+let S_STAR_P = 103;
+let S_STAR_S = 104;
+
+// Constants For Large Star Bullets
+let L_STAR_W = 105;
+let L_STAR_R = 106;
+let L_STAR_Y = 107;
+let L_STAR_G = 108;
+let L_STAR_B = 109;
+let L_STAR_P = 110;
+let L_STAR_S = 111;
+
+// Constants For Regular Knife Bullets
+let KNIFE_W = 112;
+let KNIFE_R = 113;
+let KNIFE_Y = 114;
+let KNIFE_G = 115;
+let KNIFE_B = 116;
+let KNIFE_P = 117;
+let KNIFE_S = 118;
+
+// Constants For Laser Beams
+let LASER_W = 119;
+let LASER_R = 120;
+let LASER_O = 121;
+let LASER_Y = 122;
+let LASER_G = 123;
+let LASER_B = 124;
+let LASER_P = 125;
+let LASER_S = 126;
+
+// Constants For Heart Bullets
+let HEART_W = 127;
+let HEART_R = 128;
+let HEART_Y = 129;
+let HEART_G = 130;
+let HEART_B = 131;
+let HEART_P = 132;
+let HEART_S = 134;
+
+// Constants For Water Bullets
+let WATER_W = 135;
+let WATER_R = 136;
+let WATER_O = 137;
+let WATER_Y = 138;
+let WATER_G = 139;
+let WATER_B = 140;
+let WATER_P = 141;
+let WATER_S = 142;
+
+// Constants For Fireball Bullets
+let FIREBALL_R = 143;
+let FIREBALL_O = 144;
+let FIREBALL_B = 145;
+let FIREBALL_P = 146;
+
+// Constants For Rose Bullets
+let ROSE_O = 147;
+let ROSE_B = 148;
+let ROSE_G = 149;
+let ROSE_YG = 150;
+
+// Constants For Large Ball Bullets
+let L_BALL_R = 151;
+let L_BALL_B = 152;
+let L_BALL_G = 153;
+let L_BALL_Y = 154;
+
+// Constants For Glowing Medium Ball Bullets
+let MA_BALL_W = 155;
+let MA_BALL_R = 156;
+let MA_BALL_Y = 157;
+let MA_BALL_G = 158;
+let MA_BALL_B = 159;
+let MA_BALL_P = 160;
+let MA_BALL_S = 161;
+
+// Constants For Curvy Laser Bullets
+let C_LASER_W = 162;
+let C_LASER_R = 163;
+let C_LASER_O = 164;
+let C_LASER_Y = 165;
+let C_LASER_G = 166;
+let C_LASER_B = 167;
+let C_LASER_P = 168;
+let C_LASER_S = 169;
+
+// Constants For Light Bullets
+let LIGHT_W = 170;
+let LIGHT_R = 171;
+let LIGHT_Y = 172;
+let LIGHT_G = 173;
+let LIGHT_B = 174;
+let LIGHT_P = 175;
+let LIGHT_S = 176;

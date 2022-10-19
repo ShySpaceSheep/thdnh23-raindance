@@ -1,0 +1,46 @@
+let pathToSpellBG = "../../../assets/img/backgrounds/spellBG/";
+
+let spBackgrounds = [
+    pathToSpellBG ~ "marisa_background_spell_bg.png",
+    pathToSpellBG ~ "reisen_background_spell_bg.png",
+    pathToSpellBG ~ "mokou_background_spell_bg.png",
+    pathToSpellBG ~ "kaguya_background_spell_bg.png",
+    pathToSpellBG ~ "eirin_background_spell_bg.png"
+];
+let bgCount = length(spBackgrounds);
+
+let spForegrounds = [
+    pathToSpellBG ~ "marisa_static_spell_bg.png",
+    pathToSpellBG ~ "reisen_static_spell_bg.png",
+    pathToSpellBG ~ "reisen_static_spell_bg.png",
+    pathToSpellBG ~ "kaguya_static_spell_bg.png",
+    pathToSpellBG ~ "eirin_static_spell_bg.png"
+];
+let fgCount = length(spForegrounds);
+
+// These are default definitions, which can be overriden later on, if necessary.
+let sprite2DBGObjects = [];
+ascent (i in 0..bgCount) {
+    let renderObj = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjRender_SetBlendType(renderObj, BLEND_ALPHA);
+    Obj_SetRenderPriority(renderObj, 0.21);
+    ObjPrim_SetTexture(renderObj, spBackgrounds[i]);
+    ObjSprite2D_SetSourceRect(renderObj, 0, 0, 512, 512);
+    ObjSprite2D_SetDestRect(renderObj, -256, -256, 256, 256);
+    ObjRender_SetPosition(renderObj, 384/2, 448/2, 1);
+    ObjRender_SetAlpha(renderObj, 0);
+    sprite2DBGObjects = sprite2DBGObjects ~ [renderObj];
+}
+
+let sprite2DFGObjects = [];
+ascent (i in 0..fgCount) {
+    let renderObj = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjRender_SetBlendType(renderObj, BLEND_ALPHA);
+    Obj_SetRenderPriority(renderObj, 0.21);
+    ObjPrim_SetTexture(renderObj, spForegrounds[i]);
+    ObjSprite2D_SetSourceRect(renderObj, 0, 0, 512, 512);
+    ObjSprite2D_SetDestRect(renderObj, -256, -256, 256, 256);
+    ObjRender_SetPosition(renderObj, 384/2, 448/2, 1);
+    ObjRender_SetAlpha(renderObj, 0);
+    sprite2DFGObjects = sprite2DFGObjects ~ [renderObj];
+}

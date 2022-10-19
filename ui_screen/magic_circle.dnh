@@ -1,0 +1,17 @@
+let assets = "./../assets/img";
+
+@Initialize {
+    
+}
+
+@MainLoop {
+    yield;
+}
+
+@Event {
+
+}
+
+task MagicCircle {
+
+}

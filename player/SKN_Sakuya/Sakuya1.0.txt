@@ -1,0 +1,1350 @@
+#TouhouDanmakufu[Player]
+#ScriptVersion[3]	
+#ID["SKN SAKUYA"]
+#Title["SKN_Sakuya"]
+#Text["2 Shot Types[r]Press C to switch. [r] version:1.00"]
+#Image["./Cut.png"]
+#ReplayName["SAKUYA"]
+
+let objPlayer = GetPlayerObjectID();
+let objSlowShot = ID_INVALID;
+let current = GetCurrentScriptDirectory();
+let enemy;
+let focus = false;
+let type = 0;
+let vx = 5;
+let vy = 2.25;
+let spelltime = false;
+let arr1 = [];
+let arr2 = [];
+let arr3 = [];
+let arr4 = [];
+let lwidth = 0;
+let s = ObjSound_Create;
+@Initialize
+{
+	SetPlayerSpeed(vx, vy);
+	SetPlayerClip(12,12,GetStgFrameWidth-12,GetStgFrameHeight-12);
+	SetPlayerDownStateFrame(60);
+	SetPlayerRebirthFrame(20);
+	let path = current ~ "ReisenShotData.txt";
+	LoadPlayerShotData(path); //???????
+
+	ObjPlayer_AddIntersectionCircleA1(objPlayer, 0, 0, 3, 25);
+	LoadSound(GetCurrentScriptDirectory~"graze.wav");
+	LoadSound(GetCurrentScriptDirectory~"se_shot.wav");
+	LoadSound(GetCurrentScriptDirectory~"Eff2.wav");
+	LoadSound(GetCurrentScriptDirectory~"Shot6.wav");
+	LoadSound(GetCurrentScriptDirectory~"Shot7.wav");
+	LoadSound(GetCurrentScriptDirectory~"Shot8.wav");
+	LoadSound(GetCurrentScriptDirectory~"Shot9.wav");
+	LoadSound(GetCurrentScriptDirectory~"Laser7.wav");
+	LoadSound(GetCurrentScriptDirectory~"Charge1.wav");
+	LoadSound(GetCurrentScriptDirectory~"Charge2.wav");
+	LoadSound(GetCurrentScriptDirectory~"SpellCard.wav");
+	LoadSound(current~"se_pldead.wav");
+	TImage();
+	TShot();
+	TMagicCircle();
+	HitBox;
+	Orb;
+}
+
+@MainLoop
+{
+	enemy = GetAllEnemyID;
+	yield;
+}
+
+@FinalizeShot
+{
+}
+
+@Event
+{
+	alternative(GetEventType())
+	case(EV_REQUEST_SPELL)
+	{
+		//????????
+		let spell = GetPlayerSpell();
+		if(spell >= 1 && spelltime == false)
+		{
+			SetScriptResult(true);
+			SetPlayerSpell(spell-1);
+			alternative(type)
+			case(0){TSpell2;}
+			case(1){TSpell2;}
+			
+		}
+		else
+		{
+			SetScriptResult(false);
+		}
+	}
+	case(EV_HIT)
+	{
+		PlaySE(GetCurrentScriptDirectory~"se_pldead.wav");
+		TExplosion();
+	}
+	case(EV_PLAYER_REBIRTH)
+	{
+		//??
+		SetPlayerSpell(3);
+		SetPlayerInvincibilityFrame(180);
+	}
+		case(EV_GRAZE){
+			PlaySE(GetCurrentScriptDirectory~"graze.wav");
+		}
+	case(EV_GET_ITEM)
+	{
+		let itemType = GetEventArgument(0);
+	}
+	
+}
+
+task TImage
+{
+	let f = 0;
+	let f2 = 0;
+	let px = 32;
+	let py = 48;
+	let path = GetCurrentScriptDirectory() ~ "Sprite.png";
+	ObjPrim_SetTexture(objPlayer, path);
+	Obj_SetRenderPriorityI(objPlayer,30);
+	loop
+	{
+		if(GetVirtualKeyState(VK_LEFT) == KEY_PUSH || GetVirtualKeyState(VK_LEFT) == KEY_HOLD)
+		{
+			if(f2<1){ObjSprite2D_SetSourceRect(objPlayer, 0, py, px, py*2);}
+			if(f2>=1&& f2<=2){ObjSprite2D_SetSourceRect(objPlayer, px, py, px*2, py*2);}
+			if(f2>=2 && f2<=3){ObjSprite2D_SetSourceRect(objPlayer, px*2, py, px*3, py*2);}
+			if(f2>=3 && f2<=4){ObjSprite2D_SetSourceRect(objPlayer, px*3, py, px*4, py*2);}
+			if(f2>=4 && f2<=10){ObjSprite2D_SetSourceRect(objPlayer, px*4, py, px*5, py*2);}
+			if(f2>=10&& f2<=16){ObjSprite2D_SetSourceRect(objPlayer, px*5, py, px*6, py*2);}
+			if(f2>=16 && f2<=22){ObjSprite2D_SetSourceRect(objPlayer, px*6, py, px*7, py*2);}
+			if(f2>=22){ObjSprite2D_SetSourceRect(objPlayer, px*7,py, px*8, py*2);}
+			if(f2>=28){f2=12;}
+			f2++;
+		}
+		else if(GetVirtualKeyState(VK_RIGHT) == KEY_PUSH || GetVirtualKeyState(VK_RIGHT) == KEY_HOLD)
+		{
+			if(f2<1){ObjSprite2D_SetSourceRect(objPlayer, 0, py*2, px, py*3);}
+			if(f2>=1&& f2<=2){ObjSprite2D_SetSourceRect(objPlayer, px, py*2, px*2, py*3);}
+			if(f2>=2 && f2<=3){ObjSprite2D_SetSourceRect(objPlayer, px*2, py*2, px*3, py*3);}
+			if(f2>=3 && f2<=4){ObjSprite2D_SetSourceRect(objPlayer, px*3, py*2, px*4, py*3);}
+			if(f2>=4 && f2<=10){ObjSprite2D_SetSourceRect(objPlayer, px*4, py*2, px*5, py*3);}
+			if(f2>=10 && f2<=16){ObjSprite2D_SetSourceRect(objPlayer, px*5, py*2, px*6, py*3);}
+			if(f2>=16 && f2<=22){ObjSprite2D_SetSourceRect(objPlayer, px*6, py*2, px*7, py*3);}
+			if(f2>=22){ObjSprite2D_SetSourceRect(objPlayer, px*7, py*2, px*8, py*3);}
+			if(f2>=28){f2=12;}
+			f2++;
+		}
+		else
+		{
+			if(f<6){ObjSprite2D_SetSourceRect(objPlayer, 0, 1, px, 48);}
+			if(f>=6&& f<=12){ObjSprite2D_SetSourceRect(objPlayer, px, 1, px*2, 48);}
+			if(f>=12 && f<=18){ObjSprite2D_SetSourceRect(objPlayer, px*2, 1, px*3, 48);}
+			if(f>=18 && f<=24){ObjSprite2D_SetSourceRect(objPlayer, px*3, 1, px*4, 48);}
+			if(f>=24 && f<=30){ObjSprite2D_SetSourceRect(objPlayer, px*4, 1, px*5, 48);}
+			if(f>=30 && f<=36){ObjSprite2D_SetSourceRect(objPlayer, px*5, 1, px*6, 48);}
+			if(f>=36 && f<=42){ObjSprite2D_SetSourceRect(objPlayer, px*6, 1, px*7, 48);}
+			if(f>=42){ObjSprite2D_SetSourceRect(objPlayer, px*7, 1, px*8, 48);}
+			if(f>=48){f=0;}
+			f++;
+			f2 = 0;
+		}
+		ObjSprite2D_SetDestCenter(objPlayer);
+		yield;
+	}
+
+}
+
+task Orb
+{
+	ascent(i in 0..8) // Generate Orbs
+	{
+		let obj= CreateTool;
+		arr1 = arr1 ~ [obj];
+	}
+	ascent(i in 0..8) // Generate Orbs
+	{
+		let obj= CreateTool;
+		arr2 = arr2 ~ [obj];
+	}
+	ascent(i in 0..4) // Generate Orbs
+	{
+		let obj= CreateTool;
+		arr3 = arr3 ~ [obj];
+	}
+	ascent(i in 0..4) // Generate Orbs
+	{
+		let obj= CreateTool;
+		arr4 = arr4 ~ [obj];
+	}
+
+	/*
+	1.U:Blue missle / F:Green missle / Bomb: The sun thing
+	2.U:Illution Laser [spead] / F:Flame / Bomb:master spark
+	3.U:Spread Shot / F:Green Stars (Reisen) / Bomb: Marisa B 11
+	4.U:Cold Inferno / F:Alice 11 / Bomb:Cold star
+	*/
+	ascent(i in 0..4)
+	{
+		Orb1(arr1[i],i,0);
+		Orb1(arr1[i+4],i,1);
+		Orb2(arr2[i],i,0);
+		Orb2(arr2[i+4],i,1);
+	}
+
+		task Orb1(obj,num,layer)
+		{
+			let ufco = [[-55,10],[-25,0],[25,0],[55,10]];
+			let fco = [[0,-40],[0,-40],[0,-40],[0,-40]];
+			let count = 0;
+			let dif = [[0,-10],[0,20],[0,20],[0,-10]];
+			let way = [1,1,-1,-1];
+			let time = 10;
+			let fcount = 0;
+			let dn0 = 0;
+			let dn1 = 0;
+			let dr0 = dif[num][0]/time;
+			let dr1 = dif[num][1]/time;
+			ObjRender_SetAlpha(obj,192);
+			ObjSprite2D_SetSourceRect(obj,130,142,142,162);
+			ObjSprite2D_SetDestCenter(obj);
+			ObjRender_SetScaleXYZ(obj,1,1,1);
+			if(layer==1){ObjRender_SetScaleXYZ(obj,0.5,1,0.5);}
+			ObjRender_SetBlendType(obj,BLEND_ALPHA);
+			Obj_SetRenderPriorityI(obj,23-layer);
+			while(!Obj_IsDeleted(obj))
+			{
+				if(GetPlayerState==STATE_DOWN || type!=0){Obj_SetVisible(obj,false);}
+				else{Obj_SetVisible(obj,true);}
+				ObjRender_SetPosition(obj,GetPlayerX+ufco[num][0]+dn0,GetPlayerY+ufco[num][1]+dn1,0);
+				if(focus==false){ObjRender_SetAngleXYZ(obj,0,0,30*sin(count*5));ObjRender_SetScaleXYZ(obj,1.2,1.6,0)};
+				if(focus==true){ObjRender_SetAngleXYZ(obj,0,0,30*sin(count*12));ObjRender_SetScaleXYZ(obj,1.2,1.6,0);}
+				if(focus==true){ObjRender_SetColor(obj,255,200,200);}
+				if(focus==false){ObjRender_SetColor(obj,200,200,255);}
+				count++;
+				if(focus==true && fcount<10)
+				{
+					dn0 += dr0;
+					dn1 += dr1;
+					fcount++;
+				}
+				if(focus==false && fcount>0)
+				{
+					dn0 -= dr0;
+					dn1 -= dr1;
+					fcount--;
+				}
+				yield;
+			}
+		}
+		
+		task Orb2(obj,num,layer)
+			{
+			let ufco = [[-85,10],[-35,-20],[35,-20],[85,10]];
+			let fco = [[0,-40],[0,-40],[0,-40],[0,-40]];
+			let count = 0;
+			let dif = [[0,-10],[0,20],[0,20],[0,-10]];
+			let way = [1,1,-1,-1];
+			let time = 10;
+			let fcount = 0;
+			let orbcount = 0;
+			let dn0 = 0;
+			let dn1 = 0;
+			let dr0 = dif[num][0]/time;
+			let dr1 = dif[num][1]/time;
+			ObjRender_SetAlpha(obj,192);
+			ObjSprite2D_SetSourceRect(obj,130,142,142,162);
+			ObjSprite2D_SetDestCenter(obj);
+			ObjRender_SetScaleXYZ(obj,1,1,1);
+			if(layer==1){ObjRender_SetScaleXYZ(obj,0.5,1,0.5);}
+			ObjRender_SetBlendType(obj,BLEND_ALPHA);
+			Obj_SetRenderPriorityI(obj,23-layer);
+			while(!Obj_IsDeleted(obj))
+			{
+				if(GetPlayerState==STATE_DOWN || type!=1){Obj_SetVisible(obj,false);}
+				else{Obj_SetVisible(obj,true);}
+				ObjRender_SetPosition(obj,GetPlayerX+ufco[num][0]+dn0,GetPlayerY+ufco[num][1]+dn1,0);
+				if(focus==false){ObjRender_SetAngleXYZ(obj,0,0,30*sin(count*5));ObjRender_SetScaleXYZ(obj,1.2,1.6,0)};
+				if(focus==true){ObjRender_SetAngleXYZ(obj,0,0,360*sin(count*4));ObjRender_SetScaleXYZ(obj,5,0.2,0);}
+				if(focus==true){ObjRender_SetColor(obj,255,200,255);}
+				if(focus==false){ObjRender_SetColor(obj,200,255,200);}
+				else{ObjRender_SetPosition(obj,GetPlayerX+0*cos(num*90+orbcount-10),GetPlayerY-2*sin(num*90+orbcount-10),0);}
+				count++;
+				if(focus==true && fcount<10)
+				{
+					ObjSprite2D_SetSourceRect(obj,0,224,44,242);
+					dn0 += dr0;
+					dn1 += dr1;
+					fcount++;
+				}
+				if(focus==true){orbcount+=99;}
+				
+				if(focus==false && fcount>0)
+				{
+				    ObjSprite2D_SetSourceRect(obj,130,142,142,162);
+					dn0 -= dr0;
+					dn1 -= dr1;
+					fcount--;
+				}
+				yield;
+			}
+		}
+	}
+	
+function CreateTool
+{
+		let obj=ObjPrim_Create(OBJ_SPRITE_2D); 
+		let img = GetCurrentScriptDirectory~"Sprite.png";
+		ObjPrim_SetTexture(obj,img);
+		ObjRender_SetBlendType(obj,BLEND_ALPHA);
+		Obj_SetRenderPriorityI(obj,23);
+		return obj;
+}
+
+task TShot
+{
+	let shotCount = -1;
+	let bNextShot = false;
+	let objShot = ID_INVALID;
+	let shotnum = 0;
+	let focustime = 0;
+	AddVirtualKey(VK_USER1,KEY_C,KEY_INVALID);
+	LoadSound(GetCurrentScriptDirectory~"Shot9.wav");
+	loop
+	{
+		if(GetVirtualKeyState(VK_USER1)==KEY_PUSH)
+		{
+			PlaySE(GetCurrentScriptDirectory~"Shot9.wav");
+			type = (type+1)%2;
+		}
+		if((GetVirtualKeyState(VK_SHOT)==KEY_PUSH || GetVirtualKeyState(VK_SHOT)==KEY_HOLD || bNextShot==true) && shotCount==-1)
+		{
+			shotCount = 0;
+			bNextShot = false;
+		}
+		if(GetVirtualKeyState(VK_SHOT)==KEY_FREE)
+		{
+			if(lwidth>0){lwidth--;}
+		}
+		if(GetVirtualKeyState(VK_SHOT)==KEY_HOLD && shotCount>0)
+		{
+			bNextShot = true;
+		}
+		if(GetVirtualKeyState(VK_SLOWMOVE)==KEY_PUSH || GetVirtualKeyState(VK_SLOWMOVE)==KEY_HOLD && GetPlayerState == STATE_NORMAL && IsPermitPlayerShot)
+		{
+			focus = true;
+		}
+		else if(GetPlayerState == STATE_NORMAL && IsPermitPlayerShot)
+		{
+			focus = false;
+			Obj_Delete(objSlowShot);
+		}
+		
+		if(shotCount%4==0 && GetPlayerState==STATE_NORMAL && IsPermitPlayerShot)
+		{
+				if(type==0)
+				{
+					PlaySound("se_shot",98,0);
+					let dir = [270,270,270,270];
+					VanillaBullet(GetPlayerX-10,GetPlayerY,20,270,6,1);
+					VanillaBullet(GetPlayerX+10,GetPlayerY,20,270,6,1);
+					if(shotnum%2==0)
+					{
+						if(focus==false)
+						{
+							focustime = 0;
+							Blue(ObjRender_GetX(arr1[0]),ObjRender_GetY(arr1[0]),20,270,5,1);
+							Blue(ObjRender_GetX(arr1[0]),ObjRender_GetY(arr1[0]),20,250,5,1);
+							Blue(ObjRender_GetX(arr1[1]),ObjRender_GetY(arr1[1]),20,270,5,1);
+							Blue(ObjRender_GetX(arr1[1]),ObjRender_GetY(arr1[1]),20,260,5,1);
+							Blue(ObjRender_GetX(arr1[2]),ObjRender_GetY(arr1[2]),20,270,5,1);
+							Blue(ObjRender_GetX(arr1[2]),ObjRender_GetY(arr1[2]),20,280,5,1);
+							Blue(ObjRender_GetX(arr1[3]),ObjRender_GetY(arr1[3]),20,270,5,1);
+							Blue(ObjRender_GetX(arr1[3]),ObjRender_GetY(arr1[3]),20,290,5,1);
+						}
+						if(focus==true)
+						{
+						    if(shotnum%4==0)
+							{
+							B(ObjRender_GetX(arr1[0]),ObjRender_GetY(arr1[0]),35,270,10,1);
+							}
+							if(shotnum%4==2)
+							{
+							B(ObjRender_GetX(arr1[1]),ObjRender_GetY(arr1[1]),35,270,10,1);
+							}
+							if(shotnum%4==0)
+							{
+							B(ObjRender_GetX(arr1[2]),ObjRender_GetY(arr1[2]),35,270,10,1);
+							}
+							if(shotnum%4==2)
+							{
+							B(ObjRender_GetX(arr1[3]),ObjRender_GetY(arr1[3]),35,270,10,1);
+							}
+						}
+					}
+					shotnum++;
+				}
+				if(type==1)
+				{
+					PlaySound("se_shot",98,0);
+					VanillaBullet(GetPlayerX-10,GetPlayerY,20,270,6,1);
+					VanillaBullet(GetPlayerX+10,GetPlayerY,20,270,6,1);
+						if(focus==false)
+						{
+						 if(shotnum%2==0)
+							{
+							G(ObjRender_GetX(arr2[0]),ObjRender_GetY(arr2[0]),20,285,3,1);
+							G(ObjRender_GetX(arr2[1]),ObjRender_GetY(arr2[1]),20,275,3,1);
+							G(ObjRender_GetX(arr2[2]),ObjRender_GetY(arr2[2]),20,265,3,1);
+							G(ObjRender_GetX(arr2[3]),ObjRender_GetY(arr2[3]),20,255,3,1);
+							G(ObjRender_GetX(arr2[0]),ObjRender_GetY(arr2[0]),20,270,3,1);
+							G(ObjRender_GetX(arr2[1]),ObjRender_GetY(arr2[1]),20,270,3,1);
+							G(ObjRender_GetX(arr2[2]),ObjRender_GetY(arr2[2]),20,270,3,1);
+							G(ObjRender_GetX(arr2[3]),ObjRender_GetY(arr2[3]),20,270,3,1);
+                            }
+						}
+						if(focus==true)
+						{
+							Purp(ObjRender_GetX(arr2[0]),ObjRender_GetY(arr2[0]),25,rand(250,290),3,9);
+							Purp(ObjRender_GetX(arr2[1]),ObjRender_GetY(arr2[1]),25,rand(260,280),3,9);
+							Purp(ObjRender_GetX(arr2[2]),ObjRender_GetY(arr2[2]),25,rand(260,280),3,9);
+							Purp(ObjRender_GetX(arr2[3]),ObjRender_GetY(arr2[3]),25,rand(250,290),3,9);
+						}
+					shotnum++;
+				}
+		}
+
+		if(shotCount >= 0)
+		{
+			shotCount++;
+		}
+		if(shotCount == 15)
+		{
+			shotCount=-1;
+		}
+		yield;
+	}
+}
+
+task HitBox{
+		let obj=ObjPrim_Create(OBJ_SPRITE_2D); 
+		let img = GetCurrentScriptDirectory~"eff2.png";
+		let c = 0;
+		let alpha = 0;
+		ObjPrim_SetTexture(obj,img);
+		ObjSprite2D_SetSourceRect(obj,0,16,64,80);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetBlendType(obj,BLEND_ALPHA);
+		while(!Obj_IsDeleted(obj)){
+		ObjRender_SetPosition(obj,GetPlayerX,GetPlayerY,0);
+		ObjRender_SetAngleXYZ(obj,0,0,c);
+		ObjRender_SetAlpha(obj,alpha);
+		if(GetVirtualKeyState(VK_SLOWMOVE)==KEY_HOLD){
+			if(alpha<250){alpha+=30;}
+		}
+		if(GetVirtualKeyState(VK_SLOWMOVE)==KEY_FREE){
+		if(alpha>0){alpha-=30;}
+		}
+		if(GetPlayerState != STATE_NORMAL){alpha=0;}
+		c+=3;
+		yield;
+		}
+	}
+	
+task VanillaBullet(x,y,spd,dir,dmg,pdmg)
+{
+	let shotcolor = 2;
+	let mx;
+	let my;
+	let mangle;
+	let mainobj = CreatePlayerShotA1(x,y,spd,dir,dmg,pdmg,shotcolor);
+	ObjRender_SetAngleZ(mainobj, -90);
+	let count = 0;
+	while(!Obj_IsDeleted(mainobj))
+	{
+		mx = ObjMove_GetX(mainobj);
+		my = ObjMove_GetY(mainobj);
+		mangle = ObjMove_GetAngle(mainobj);
+		yield;
+	}
+	let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+	let img = GetCurrentScriptDirectory~"Sprite.png";
+	let dx = 0;
+	ObjPrim_SetTexture(obj,img);
+	if(shotcolor==1){dx = 112;}
+	ObjRender_SetPosition(obj,mx,my,0);
+	ObjRender_SetAlpha(obj,128);
+	ascent(i in 0..4)
+	{
+			ObjRender_SetPosition(obj,mx+3*i*cos(dir),my+20*i*sin(dir),0);
+		ObjSprite2D_SetSourceRect(obj,dx+i*32,144,dx+32+i*32,160);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetAngleXYZ(obj,0,0,mangle);
+		wait(3);
+	}
+	Obj_Delete(obj);
+}
+	
+task Blue(x,y,spd,dir,dmg,pdmg)
+{
+	let shotcolor = 3;
+	let mx;
+	let my;
+	let mangle;
+	let mainobj = CreatePlayerShotA1(x,y,spd,dir,dmg,pdmg,shotcolor);
+	ObjRender_SetAngleZ(mainobj, -90);
+	let count = 0;
+	while(!Obj_IsDeleted(mainobj))
+	{
+		mx = ObjMove_GetX(mainobj);
+		my = ObjMove_GetY(mainobj);
+		mangle = ObjMove_GetAngle(mainobj);
+		yield;
+	}
+	let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+	let img = GetCurrentScriptDirectory~"Sprite.png";
+	let dx = 0;
+	ObjPrim_SetTexture(obj,img);
+	if(shotcolor==33){dx = 112;}
+	ObjRender_SetPosition(obj,mx,my,0);
+	ObjRender_SetAlpha(obj,128);
+	ascent(i in 0..4)
+	{
+			ObjRender_SetPosition(obj,mx,my,0);
+		ObjSprite2D_SetSourceRect(obj,dx+i*32,160,dx+32+i*32,176);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetAngleXYZ(obj,0,0,mangle);
+		wait(3);
+	}
+	Obj_Delete(obj);
+}
+
+
+task B(x,y,spd,dir,dmg,pdmg)
+{
+	let shotcolor = 4;
+	let mx;
+	let my;
+	let mangle;
+	let langle;
+	let scale = 0;
+	let mainobj = CreatePlayerShotA1(x,y,spd,dir,dmg,pdmg,shotcolor);
+	ObjRender_SetAngleZ(mainobj, -90);
+	if(FindTarget!=-1 && shotcolor==4)
+	{
+		let h_obj = FindTarget;
+		let targetangle = atan2(ObjMove_GetY(h_obj)-ObjMove_GetY(mainobj),ObjMove_GetX(h_obj)-ObjMove_GetX(mainobj));
+		ObjMove_SetAngle(mainobj,targetangle);
+	}
+	let count = 0;
+	while(!Obj_IsDeleted(mainobj))
+	{
+		mx = ObjMove_GetX(mainobj);
+		my = ObjMove_GetY(mainobj);
+		langle = ObjMove_GetAngle(mainobj);
+		mangle = ObjMove_GetAngle(mainobj);
+		yield;
+	}
+	if(mx>0 && mx<GetStgFrameWidth && my>0 && my<GetStgFrameHeight)
+	{
+		if(shotcolor==4){PlaySound("Shot8",40,0);}
+	}
+	let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+	let img = GetCurrentScriptDirectory~"Sprite.png";
+	ObjPrim_SetTexture(obj,img);
+	ObjRender_SetPosition(obj,mx,my,0);
+	if(shotcolor==4){MissileExplode(mx,my,1);}
+	ascent(i in 0..10)
+	{
+		if(shotcolor==4){ObjSprite2D_SetSourceRect(obj,50,160,77,176);}
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetAngleXYZ(obj,0,0,mangle);
+		ObjRender_SetScaleXYZ(obj,scale,scale,0);
+		ObjRender_SetAlpha(obj,192-i*19);
+		scale+= 0.1;
+		yield;
+	}
+	Obj_Delete(obj);
+
+	task MissileExplode(mx,my,num)
+	{
+		if(num==1)
+		{
+			MExplode(mx,my,40,0.75);
+		}
+		else if(num>1)
+		{
+			ascent(i in 0..3)
+			{
+				let rx = rand(-50,50);
+				let ry = rand(-50,50);
+				let mr = rand(0,30);
+				let ma = rand(0,360);
+				if(my+ry>0)
+				{
+					MExplode(mx+mr*cos(ma),my+mr*sin(ma),0,0.75);
+					mr = rand(0,60);
+					wait(3);
+					MExplode(mx+mr*cos(ma),my+mr*sin(ma),0,0.75);
+				}
+				wait(3);
+			}
+		}
+		task MExplode(mx2,my2,sy,scale)
+		{
+			let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+			let img = GetCurrentScriptDirectory~"missle.png";
+			ObjPrim_SetTexture(obj,img);
+			ObjRender_SetPosition(obj,mx,my,0);
+			ObjRender_SetScaleXYZ(obj,3,3,0);
+			//ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
+			ascent(i in 0..16)
+			{
+				ObjSprite2D_SetSourceRect(obj,truncate(i/2)*32,sy,truncate(i/2)*32+32,32+sy);
+				ObjSprite2D_SetDestCenter(obj);
+				ObjRender_SetColor(obj,255,255,255);
+				if(num==1){ObjRender_SetPosition(obj,mx+0.5*i*cos(langle),my+0.5*i*sin(langle),0)};
+				yield;
+			}
+			Obj_Delete(obj);
+		}
+    }
+}
+	
+task Purp(x,y,spd,dir,dmg,pdmg)
+{
+	let shotcolor = 5;
+	let mx;
+	let my;
+	let mangle;
+	let mainobj = CreatePlayerShotA1(x,y,spd,dir,dmg,pdmg,shotcolor);
+	ObjRender_SetAngleZ(mainobj, -90);
+	let count = 0;
+	while(!Obj_IsDeleted(mainobj))
+	{
+		mx = ObjMove_GetX(mainobj);
+		my = ObjMove_GetY(mainobj);
+		mangle = ObjMove_GetAngle(mainobj);
+		yield;
+	}
+	let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+	let img = GetCurrentScriptDirectory~"Sprite.png";
+	let dx = 0;
+	ObjPrim_SetTexture(obj,img);
+	if(shotcolor==33){dx = 112;}
+	ObjRender_SetPosition(obj,mx,my,0);
+	ObjRender_SetAlpha(obj,128);
+	ascent(i in 0..4)
+	{
+			ObjRender_SetPosition(obj,mx,my,0);
+		ObjSprite2D_SetSourceRect(obj,dx+i*32,160,dx+32+i*32,176);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetAngleXYZ(obj,0,0,mangle);
+		wait(3);
+	}
+	Obj_Delete(obj);
+}
+
+task G(x,y,spd,dir,dmg,pdmg)
+{
+	let shotcolor = 6;
+	let mx;
+	let my;
+	let mangle;
+	let mainobj = CreatePlayerShotA1(x,y,spd,dir,dmg,pdmg,shotcolor);
+	ObjRender_SetAngleZ(mainobj, -90);
+	let count = 0;
+	while(!Obj_IsDeleted(mainobj))
+	{
+		mx = ObjMove_GetX(mainobj);
+		my = ObjMove_GetY(mainobj);
+		mangle = ObjMove_GetAngle(mainobj);
+		yield;
+	}
+	let obj= ObjPrim_Create(OBJ_SPRITE_2D); // graphic
+	let img = GetCurrentScriptDirectory~"Sprite.png";
+	let dx = 0;
+	ObjPrim_SetTexture(obj,img);
+	if(shotcolor==1){dx = 112;}
+	ObjRender_SetPosition(obj,mx,my,0);
+	ObjRender_SetAlpha(obj,128);
+	ascent(i in 0..4)
+	{
+			ObjRender_SetPosition(obj,mx+3*i*cos(dir),my+10*i*sin(dir),0);
+		ObjSprite2D_SetSourceRect(obj,dx+i*32,178,dx+32+i*32,192);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetAngleXYZ(obj,0,0,mangle);
+		wait(3);
+	}
+	Obj_Delete(obj);
+}
+
+task TSpell2{
+	let current = GetCurrentScriptDirectory();
+	let imgEffect = current ~ "Exploding.png";
+
+	SetPlayerInvincibilityFrame(300);//無敵時間を設定
+	let angle = rand(0, 360);
+	ascent(i in 0 .. 60){
+		PlaySound("Slash",80,0);
+		TSpellKnife(GetPlayerX(), GetPlayerY(), 1.5+1.0*i/120, angle+186*i);
+		yield;
+		yield;
+	}
+	loop(120){
+		yield;
+	}
+
+
+	Obj_Delete(GetSpellManageObject());
+
+	task TSpellKnife(x, y, speed, angle){
+		let objS = ObjShot_Create(OBJ_SHOT);
+		ObjMove_SetPosition(objS, x, y);
+		ObjMove_SetSpeed(objS, 0);
+		ObjMove_SetAngle(objS, angle);
+		ObjShot_SetGraphic(objS, 7);
+		ObjRender_SetScaleXYZ(objS,2,2,0);
+		ObjShot_SetDamage(objS, 0.0);
+		ObjShot_SetPenetration(objS, 1000);
+		ObjShot_SetAutoDelete(objS, false);
+		ObjShot_SetSpellFactor(objS, true);
+		ObjShot_SetEraseShot(objS, true);
+		ObjShot_Regist(objS);
+		descent(i in 0 .. 90){
+			ObjMove_SetPosition(objS, ObjMove_GetX(objS)+speed*i/90*cos(angle), ObjMove_GetY(objS)+speed*i/90*sin(angle));
+			ObjMove_SetAngle(objS, ObjMove_GetAngle(objS)+12);
+			yield;
+		}
+		PlaySound("Slash",80,0);
+		let enemyCount = 9;
+		if(enemyCount > 0){
+			let Epos = GetEnemyIntersectionPosition(x, y, 1);
+			angle = Horming(atan2(Epos[0][1]-ObjMove_GetY(objS), Epos[0][0]-ObjMove_GetX(objS)), angle, 180);
+		}
+		ascent(i in 0 .. 3){
+			Knife(ObjMove_GetX(objS), ObjMove_GetY(objS), angle+9*i-9);
+		}
+		Obj_Delete(objS);
+
+		task Knife(x, y, angle){
+			let objS2 = ObjShot_Create(OBJ_SHOT);
+			ObjMove_SetPosition(objS2, x, y);
+			ObjMove_SetSpeed(objS2, 50);
+			ObjRender_SetAngleZ(objS2, -90);
+			ObjRender_SetScaleXYZ(objS2,3,2,0);
+			ObjMove_SetAngle(objS2, angle);
+			ObjShot_SetGraphic(objS2, 4);
+			ObjShot_SetDamage(objS2, 8.0);
+			ObjShot_SetPenetration(objS2, 20);
+			ObjShot_SetAutoDelete(objS2, false);
+			ObjShot_SetSpellFactor(objS2, true);
+			ObjShot_SetEraseShot(objS2, true);
+			ObjShot_Regist(objS2);
+			loop(30){
+				yield;
+			}
+			Obj_Delete(objS2);
+		}
+		
+		//エフェクト
+		task Effect(objS, angle, rect_N){
+			let objEfc = ObjPrim_Create(OBJ_SPRITE_2D);
+	
+			let alpha = 63;
+			ObjRender_SetColor(objEfc, alpha, alpha, alpha);
+			ObjPrim_SetTexture(objEfc, "Exploding.png");
+			Obj_SetRenderPriority(objEfc, 0.23);
+			ObjRender_SetBlendType(objEfc, BLEND_ADD_RGB);
+			ObjRender_SetAngleZ(objEfc, angle+90);
+			ObjSprite2D_SetSourceRect(objEfc, 40*(rect_N+1), 0, 40*(rect_N+2), 120);
+			ObjSprite2D_SetDestRect(objEfc, -10, -60, 10, 60);
+			ObjRender_SetPosition(objEfc, ObjMove_GetX(objS), ObjMove_GetY(objS), 0);
+	
+			descent(i in 1 .. 11){
+				alpha = 63*i/10;
+				ObjRender_SetColor(objEfc, alpha, alpha, alpha);
+				yield;
+			}
+			Obj_Delete(objEfc);
+			Obj_Delete(GetSpellManageObject());
+		}
+	}
+}
+	
+function Horming(toAngle, angle, dAngle){
+	toAngle %= 360;
+	angle %= 360;
+
+	let ret = toAngle-angle;
+	if(ret >= 180){ret -= 360;}//180°以上なら-180～180内に補正
+	if(ret < -180){ret += 360;}//-180°未満なら-180～180内に補正
+
+	if((|ret|) < dAngle){
+		angle = toAngle;
+	}else{
+		if(sin(ret) > 0){
+			angle += dAngle;
+		}else{
+			angle -= dAngle;
+		}
+	}
+	if(angle >= 360){angle -= 360;}
+	if(angle < 0){angle += 360;}
+
+	return angle;
+}
+
+function TExpan(px,py,maxv,t,r,g,b)
+{
+	let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+	let img=GetCurrentScriptDirectory~"./Exploding.png";
+	let scale = 0;
+	let v = 0;
+	let malpha = 255/t;
+	ObjPrim_SetTexture(obj,img);
+	ObjSprite2D_SetSourceRect(obj,0,0,128,128);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetBlendType(obj,BLEND_ADD_ARGB);
+	ObjRender_SetPosition(obj,px,py,0);
+	ObjRender_SetColor(obj,r,g,b);
+	Obj_SetRenderPriorityI(obj,25);
+	Expan;
+		task Expan{
+			descent(i in 0..t)
+			{
+			ObjRender_SetAlpha(obj,malpha*i);
+			v = (i*maxv/2)/(t*t);
+			scale += v;
+			ObjRender_SetScaleXYZ(obj,scale,scale,0);
+			yield;
+			}
+			Obj_Delete(obj);
+		}
+}
+
+function TExpan2(px,py,maxv,t,r,g,b) // Missile Explode
+{
+	let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+	let img=GetCurrentScriptDirectory~"./MissleExplode.png";
+	let scale = 0;
+	let v = 0;
+	let malpha = 255/t;
+	ObjPrim_SetTexture(obj,img);
+	ObjSprite2D_SetSourceRect(obj,0,0,128,128);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetBlendType(obj,BLEND_ALPHA);
+	ObjRender_SetPosition(obj,px,py,0);
+	ObjRender_SetColor(obj,r,g,b);
+	Obj_SetRenderPriorityI(obj,25);
+	Expan;
+		task Expan{
+			descent(i in 0..t)
+			{
+			ObjRender_SetAlpha(obj,malpha*i);
+			v = (i*maxv/2)/(t*t);
+			scale += v;
+			ObjRender_SetScaleXYZ(obj,scale,scale,0);
+			yield;
+			}
+			Obj_Delete(obj);
+		}
+}
+
+
+		
+task etama(r,a,type){
+	let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+	let img=GetCurrentScriptDirectory~"eff2.png";
+	let dir = rand(0,359);
+	let angle = rand(0,359);
+	let size = 0.5+r/150;
+	let s = size;
+	let ra = r;
+	let c = 0;
+	let m = -10;
+	let cp = rand(-7,7);
+	let alpha = 0;
+	let count = 0;
+	let alphaplus = 255/ra;
+	ObjPrim_SetTexture(obj,img);
+	if(type==1){ObjSprite2D_SetSourceRect(obj,32,226,64,254);}
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetScaleXYZ(obj,size,size,size);
+	ObjRender_SetBlendType(obj,BLEND_ALPHA);
+	ObjRender_SetAlpha(obj,0);
+	while(r>0){
+	ObjRender_SetPosition(obj,GetPlayerX+r*cos(dir),GetPlayerY+r*sin(dir),0);
+	ObjRender_SetAngleXYZ(obj,0,0,angle+c*20);
+	ObjRender_SetScaleXYZ(obj,size,size,size);
+	ObjRender_SetAlpha(obj,alpha*5);
+	if(r>ra/2){alpha += alphaplus+1;}
+	else{
+	alpha -= alphaplus;
+	if(alpha<=0){Obj_Delete(obj);}
+	}
+	r -= 10+c;
+	c -= 0.1;
+	yield;
+	}
+	Obj_Delete(obj);
+}
+
+function TCharge01(x,y,size,frame,r,g,b){
+	let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+	let img=GetCurrentScriptDirectory~"charge.png";
+	ObjPrim_SetTexture(obj,img);
+	ObjSprite2D_SetSourceRect(obj,0,0,128,128);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetPosition(obj,x,y,0);
+	ObjRender_SetAlpha(obj,0);
+	ObjRender_SetScaleXYZ(obj,size,size,0);
+	ObjRender_SetColor(obj,r,g,b);
+	TAlpha;
+	TShrink;
+	return obj;
+	task TAlpha{
+		let l=10;
+		let alpha=255/l;
+		loop(l){
+			ObjRender_SetAlpha(obj,alpha);
+			alpha+=255/(l*2);
+			yield;
+			}
+		}
+	task TShrink{
+		let l=frame;
+		let a = size*2/l/l;
+		ascent(i in 0..l){
+			ObjRender_SetScaleXYZ(obj,size,size,0);
+			ObjRender_SetPosition(obj,GetPlayerX,GetPlayerY,0);
+			size = size-i*a;
+			if(Obj_IsDeleted(GetPlayerID)){Obj_Delete(obj);}
+			yield;
+			}
+		Obj_Delete(obj);
+		
+	}
+}
+
+task fragment(shot,size,num){
+		if(!Obj_IsDeleted(shot)){
+		loop(num){
+		realTask;
+		}
+		}
+			task realTask{
+			let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+			let img=GetCurrentScriptDirectory~"effbreak.png";
+			let s = rand(0.8,1.2)+size;
+			let pic = ObjShot_GetImageID(shot);
+			let color = GetShotDataInfoA1(pic,TARGET_ENEMY,INFO_DELAY_COLOR);
+			let rect = [0,0,32,32];
+			ObjPrim_SetTexture(obj,img);
+			ObjSprite2D_SetSourceRect(obj,rect[0],rect[1],rect[2],rect[3]);
+			ObjSprite2D_SetDestCenter(obj);
+			ObjRender_SetScaleXYZ(obj,s,s,0);
+			ObjRender_SetAngleXYZ(obj,0,0,rand(0,359));
+			ObjRender_SetBlendType(obj,BLEND_ALPHA);
+			ObjRender_SetColor(obj,color[0],color[1],color[2]);
+			Obj_SetRenderPriority(obj,0.21);
+			ObjShot_SetIntersectionEnable(shot,false);
+			let x = ObjMove_GetX(shot);
+			let y = ObjMove_GetY(shot);
+			if(x!=0 && y!=0){
+			ascent(i in 0..7){
+			ObjRender_SetPosition(obj,x,y,0);
+			ObjSprite2D_SetSourceRect(obj,rect[0],rect[1],rect[2],rect[3]);
+			rect[0] = rect[0]+32;
+			rect[2] = rect[2]+32;
+			wait(3);
+			}
+			}
+			Obj_Delete(obj);
+			}
+		}
+		
+task spongy(shot,t){
+		let cloud = ObjShot_GetImageID(shot);
+		let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+		if(!Obj_IsDeleted(shot)){
+		let img=GetCurrentScriptDirectory()~"AllStarShot.png";
+		let s = 1;
+		let adc = false;
+		let rect = GetShotDataInfoA1(cloud,TARGET_ENEMY,INFO_RECT);
+		let dir = ObjMove_GetAngle(shot)+90;
+		ObjPrim_SetTexture(obj,img);
+		ObjSprite2D_SetSourceRect(obj,rect[0],rect[1],rect[2],rect[3]);
+		ObjSprite2D_SetDestCenter(obj);
+		ObjRender_SetPosition(obj,ObjMove_GetX(shot),ObjMove_GetY(shot),0);
+		ObjRender_SetAngleXYZ(obj,0,0,dir);
+		ObjRender_SetBlendType(obj,BLEND_ALPHA);
+	 if( (cloud>=1 && cloud<=41) || (cloud>=58 && cloud<=73) || (cloud>=106 && cloud <=121)
+	 || (cloud>=170 && cloud<=185) || (cloud>=233 && cloud<=239)
+	 || (cloud>=248 && cloud <=252) || (cloud>=269 && cloud<=283)
+	 || (cloud>=300 && cloud<=307) || (cloud>=340 && cloud<=346)
+	 || (cloud>=355 && cloud<=362) || (cloud>=371 && cloud<=382)
+	 || (cloud>=399 && cloud<=408)){
+	 adc = true;
+	 ObjRender_SetBlendType(obj,BLEND_ADD_RGB);
+	 }
+		if(cloud>=41){
+		ascent(i in 0..t){
+		ObjRender_SetScaleXYZ(obj,s,s,0);
+		if(adc==false){ObjRender_SetAlpha(obj,255-i*255/t);}
+		if(adc==true){ObjRender_SetColor(obj,255-i*255/t,255-i*255/t,255-i*255/t);}
+		s += 0.1;
+		yield;
+		}
+		}
+		Obj_Delete(obj);
+		}
+		}
+
+function GetDistance(x1,y1,x2,y2){
+return((|((x2-x1)^2+(y2-y1)^2)^(1/2)|));
+}
+
+task TMagicCircle
+{
+
+
+	let countVertex = 64;
+	let listRadius = [];
+	loop(countVertex)
+	{
+		listRadius = listRadius ~ [0];
+	}
+
+	let path = current ~ "Default_Player_MagicCircle.png";
+	let obj = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+	ObjPrim_SetPrimitiveType(obj, PRIMITIVE_TRIANGLESTRIP);
+	ObjPrim_SetVertexCount(obj, countVertex);
+	ObjRender_SetBlendType(obj, BLEND_ADD_RGB);
+	Obj_SetRenderPriority(obj, 0.60);
+	ObjPrim_SetTexture(obj, path);
+	ascent(iVert in 0..countVertex / 2)
+	{
+		let left = iVert * 128;
+		let indexVert = iVert * 2;
+		ObjPrim_SetVertexUVT(obj, indexVert + 0, left, 0);
+		ObjPrim_SetVertexUVT(obj, indexVert + 1, left, 64);		
+	}
+
+	let cx = 0;
+	let cy = 0;
+	let maxRadius = 128;
+	let alpha = 0;
+	let frame = 0;
+	let angleRender = 0;
+	let frameInvOld = 0;
+
+	while(true)
+	{
+		let frameInv = GetPlayerInvincibilityFrame();
+
+		if(frameInv <= 0)
+		{
+			Obj_SetVisible(obj, false);
+			frameInvOld = 0;
+		}
+		else
+		{
+			if(frameInvOld == 0)
+			{
+				//???
+				ascent(iVert in 0..countVertex)
+				{
+					listRadius[iVert] = 0;
+				}
+				alpha = 0;
+				frame = 0;
+			}
+			frameInvOld = frameInv;
+
+			let px = GetPlayerX();
+			let py = GetPlayerY();
+
+			alpha += 1 / 120;
+			alpha = min(alpha, 1);
+			angleRender += 360 / countVertex / 2;
+			Obj_SetVisible(obj, true);
+
+			frameInv = min(100, frameInv);
+			let rRate = frameInv / 100;
+
+			ascent(iVert in 0..countVertex / 2)
+			{
+				let indexVert = iVert * 2;
+				let angle = 360 / (countVertex / 2 - 1) * iVert;
+
+				let vx1 = listRadius[indexVert] * cos(angle);
+				let vy1 = listRadius[indexVert] * sin(angle);
+				ObjPrim_SetVertexPosition(obj, indexVert + 0, vx1, vy1, 0);
+
+				let vx2 = listRadius[indexVert+1] * cos(angle);
+				let vy2 = listRadius[indexVert+1] * sin(angle);
+				ObjPrim_SetVertexPosition(obj, indexVert + 1, vx2, vy2, 0);
+
+				//?????
+				if(frame >= 0)
+				{//??
+					let dr = (maxRadius * rRate - listRadius[indexVert]) / 8;
+					listRadius[indexVert] = listRadius[indexVert] + dr;
+				}
+				if(frame > 10)
+				{//??
+					let rRateIn = rRate - 0.12;
+					if(rRateIn < 0){rRateIn=0;}
+					let dr= (maxRadius * rRateIn - listRadius[indexVert + 1]) / 16;
+					listRadius[indexVert + 1] = listRadius[indexVert + 1] + dr;
+				}
+
+			}
+
+			ObjRender_SetColor(obj, 192 * alpha, 192 * alpha, 255 * alpha);
+			ObjRender_SetPosition(obj, px, py, 0);
+			ObjRender_SetAngleZ(obj, angleRender);
+
+			frame++;
+		}
+
+		yield;
+	}
+}
+
+task RingExpand5(x,y,size){
+		 	let img = GetCurrentScriptDirectory() ~ "ring.png";
+			let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+			let c = 0;
+			ObjRender_SetBlendType(obj, BLEND_ADD_ARGB);
+			Obj_SetRenderPriority(obj, 0.30);
+			ObjPrim_SetTexture(obj, img);
+			ObjSprite2D_SetSourceRect(obj, 0, 0, 128, 128);
+			ObjSprite2D_SetDestCenter(obj);
+			ascent(i in 0..40){
+			ObjRender_SetPosition(obj,x,y,0);
+			ObjRender_SetScaleXYZ(obj,i/10*size,i/10*size,0);
+			ObjRender_SetColor(obj,((255-i*6.5)/2),((255-i*6.5)/2),((255-i*6.5)));
+			yield;
+			}
+			Obj_Delete(obj);
+		}
+
+task TExplosion
+{
+let dtime = 60;
+MapleExplode(GetPlayerX,GetPlayerY,1.5,"BLUE");
+ExCircle(GetPlayerX,GetPlayerY,0.05,dtime);
+ExCircle(GetPlayerX-30,GetPlayerY,0.05,dtime);
+ExCircle(GetPlayerX+30,GetPlayerY,0.05,dtime);
+ExCircle(GetPlayerX,GetPlayerY-30,0.05,dtime);
+ExCircle(GetPlayerX,GetPlayerY+30,0.05,dtime);
+MapleExplode(GetPlayerX,GetPlayerY,1.5,"BLUE");
+	PlaySE(GetCurrentScriptDirectory~"se_pldead.wav");
+loop(10){yield;}
+ExCircle(GetPlayerX,GetPlayerY,0.05,dtime-10);
+
+}
+
+task ExCircle(x,y,sc,dtime){
+let obj = ObjPrim_Create(OBJ_SPRITE_2D);
+let timer = 0;
+let s = 0;
+
+
+let Target = current~"./Effect03.png";
+let mx = ObjRender_GetX(obj);
+let my = ObjRender_GetY(obj);
+
+
+	Obj_SetRenderPriorityI(obj, 79);
+	ObjPrim_SetTexture(obj, Target);
+
+	ObjRender_SetBlendType(obj, BLEND_INV_DESTRGB);
+
+	ObjSprite2D_SetSourceRect(obj, 0, 0, 512, 512);
+
+        ObjSprite2D_SetDestCenter(obj);
+        ObjRender_SetScaleXYZ(obj, s, s, s);
+ObjRender_SetPosition(obj,x,y,0);
+loop{
+timer++;
+        s+=sc;
+        ObjRender_SetScaleXYZ(obj, s, s, s);
+
+        if(timer == dtime){
+        Obj_Delete(obj);
+        break;
+        }
+        yield;
+        }
+
+        }
+
+task MapleExplode(px,py,speed,c){
+	let color = GetColor(c);
+	let st = rand(0,360);
+	TExpan(px,py,12,30,color[0],color[1],color[2]);
+	ascent(i in 0..59){
+		Maple(px,py,speed+speed/(2)*sin(i*177),i*30+st,color[0],color[1],color[2]);
+	}
+}
+
+task Maple(px,py,sizespeed,dir,red,green,blue){
+	let obj=ObjPrim_Create(OBJ_SPRITE_2D);
+	let img=GetCurrentScriptDirectory~"img/effect1.png";
+	let spd = sizespeed*7;
+	let acc = spd/60;
+	let acc2 = acc/100;
+	let r = 0;
+	let a = [0,0,0];
+	let angle_s = [0,0,0];
+	let alpha = 255;
+	let result = 0;
+	let color_ratio = [red/90,green/90,blue/90];
+	ascent(i in 0..3){
+	result = rand(-1,1);
+	if(result>0){result = 1;}
+	else{result = -1;}
+	angle_s[i] = rand(2,4)*result;
+	}
+	LoadTexture(img);
+	ObjPrim_SetTexture(obj,img);
+	ObjSprite2D_SetSourceRect(obj, 0, 0, 64, 64);
+	ObjSprite2D_SetDestCenter(obj);
+	ObjRender_SetBlendType(obj,BLEND_ADD_RGB);
+	ObjRender_SetScaleXYZ(obj,sizespeed,sizespeed,sizespeed);
+		while(alpha>0){
+		ObjRender_SetAngleXYZ(obj,a[0],a[1],a[2]);
+		ObjRender_SetPosition(obj,px+r*cos(dir),py+r*sin(dir),0);
+		ObjRender_SetColor(obj,red,green,blue);
+		r+=spd;
+		if(spd>1.5){
+		red -= color_ratio[0];
+		green -= color_ratio[1];
+		blue -= color_ratio[2];
+		spd -=acc;
+		acc += acc2;
+		}
+		else{
+		red -= color_ratio[0]*4;
+		green -= color_ratio[1]*4;
+		blue -= color_ratio[2]*4;
+		}
+		ascent(i in 0..3){
+		a[i] = a[i]+angle_s[i];
+		}
+		yield;
+		}
+		Obj_Delete(obj);
+}
+
+
+function GetColor(type){
+	if(type=="RED"){return [255,32,32];}
+	if(type=="ORANGE"){return [255,128,32];}
+	if(type=="YELLOW"){return [255,255,32];}
+	if(type=="GREEN"){return [32,255,32];}
+	if(type=="BLUE"){return [32,32,255];}
+	if(type=="PURPLE"){return [255,32,255];}
+	if(type=="PINK"){return [255,32,128];}
+	if(type=="WHITE"){return [255,255,255];}
+	if(type=="AQUA"){return [0,255,255];}
+	if(type=="WHITE"){return [255,255,255];}
+	}
+
+task Homing(obj,h_obj,maxTraverse){  // max. angle of traverse
+	let angle = ObjMove_GetAngle(obj);
+	let dir = 0;
+	let boss = GetIntersectionRegistedEnemyID;
+    while(! Obj_IsDeleted(obj) && Obj_GetValueD(h_obj,"HomingOrNot",1)==1 && FindTarget!=-1) {
+        ObjMove_SetAngle(obj, angle);
+		maxTraverse += 0.2;
+		if(length(boss)>=1){
+		dir = atan2(ObjMove_GetY(h_obj) - ObjMove_GetY(obj),
+                        ObjMove_GetX(h_obj) - ObjMove_GetX(obj));
+						if(ObjRender_GetX(h_obj)==0 && ObjRender_GetY(h_obj) ==0){
+							if(FindTarget!=-1)
+							{
+								h_obj = FindTarget;
+							}
+							else
+							{
+								break;
+							}
+						}
+						}
+        let diff = dir - angle;
+        while(diff >= 180) { diff -= 360; }    // adjust the range
+        while(diff < -180) { diff += 360; }
+
+        let diffAbs = (|diff|);
+        if(diffAbs < maxTraverse) {
+            angle = dir;
+        } else {
+            angle += maxTraverse * diff / diffAbs;
+        }
+		yield;
+    }
+}	
+	
+function FindTarget{
+	let enemy_id = GetIntersectionRegistedEnemyID;
+	let mindis = 999;
+	let h_obj;
+	if(length(enemy_id)>0){
+	h_obj = enemy_id[0];
+	ascent(i in 0..length(enemy_id)){
+	let dis = GetDistance(GetPlayerX,GetPlayerY,ObjMove_GetX(enemy_id[i]),ObjMove_GetY(enemy_id[i]));
+		if(mindis>dis){
+		mindis = dis;
+		h_obj = enemy_id[i];
+		}
+	}
+	return h_obj;
+	}
+	else
+	{
+	return -1;
+	}
+}
+
+task PlaySound(str,v,w){
+	if(str == "Laser7"){ObjSound_Load(s,GetCurrentScriptDirectory~"Laser7.wav");}
+	if(str == "Shot7"){ObjSound_Load(s,GetCurrentScriptDirectory~"Shot7.wav");}
+	if(str == "Shot8"){ObjSound_Load(s,GetCurrentScriptDirectory~"Shot8.wav");}
+	if(str == "Shot9"){ObjSound_Load(s,GetCurrentScriptDirectory~"Shot9.wav");}
+	if(str == "Charge1"){ObjSound_Load(s,GetCurrentScriptDirectory~"Charge1.wav");}
+	if(str == "Charge2"){ObjSound_Load(s,GetCurrentScriptDirectory~"Charge2.wav");}
+	if(str == "Charge3"){ObjSound_Load(s,GetCurrentScriptDirectory~"Charge3.wav");}
+	if(str == "Charge4"){ObjSound_Load(s,GetCurrentScriptDirectory~"Charge4.wav");}
+	if(str == "Eff2"){ObjSound_Load(s,GetCurrentScriptDirectory~"Eff2.wav");}
+	if(str == "se_shot"){ObjSound_Load(s,GetCurrentScriptDirectory~"se_shot.wav");}
+	if(str == "Slash"){ObjSound_Load(s,GetCurrentScriptDirectory~"Slash.wav");}
+	loop(w){yield;}
+	ObjSound_SetSoundDivision(s,SOUND_SE);
+	ObjSound_SetVolumeRate(s,v);
+	ObjSound_Play(s);
+	/*loop(120){yield;}
+	Obj_Delete(s);*/
+	}
+
+				task ScreenShake(time){
+				loop(time/2){
+				Set2DCameraFocusX(Get2DCameraX + rand(-4, 4));
+				Set2DCameraFocusY(Get2DCameraY + rand(-4, 4));
+				yield;
+				Reset2DCamera;
+				yield;
+				}
+				Reset2DCamera;
+			}	
+
+function wait(t){
+	loop(t){yield;}
+	}

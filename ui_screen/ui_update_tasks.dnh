@@ -1,0 +1,120 @@
+task UpdateFPS(fpsCounterText) {
+    loop {
+        let fps = GetCurrentFps();
+        let fpsText = vtos("1.2f", fps) ~ "fps";
+        ObjText_SetText(fpsCounterText, fpsText);
+        yield;
+    }
+}
+
+task UpdateHighScore(digitCount, sprDigitList) {
+    loop {
+        let hiScore = GetScore();
+        hiScore = min(hiScore, 999999999);
+        let digitSet = DigitToArray(hiScore, digitCount);
+        ObjSpriteList2D_ClearVertexCount(sprDigitList);
+
+        ascent(i in 0..digitCount) {
+            let digit = digitSet[i];
+            ObjRender_SetX(sprDigitList, 523 + i * 12);
+
+            ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
+			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);
+			ObjSpriteList2D_AddVertex(sprDigitList);
+        }
+
+        yield;
+    }
+}
+
+task UpdateScore(digitCount, sprDigitList) {
+    loop {
+        let score = GetScore();
+        score = min(score, 999999999);
+        let digitSet = DigitToArray(score, digitCount);
+        ObjSpriteList2D_ClearVertexCount(sprDigitList);
+
+        ascent(i in 0..digitCount) {
+            let digit = digitSet[i];
+            ObjRender_SetX(sprDigitList, 523 + i * 12);
+
+            ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
+			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);
+			ObjSpriteList2D_AddVertex(sprDigitList);
+        }
+        yield;
+    }
+}
+
+task UpdateGraze(digitCount, sprDigitList) {
+    loop {
+        let graze = GetGraze();
+        graze = min(graze, 99999);
+        let digitSet = DigitToArray(graze, digitCount);
+        ObjSpriteList2D_ClearVertexCount(sprDigitList);
+
+        ascent(i in 0..digitCount) {
+            let digit = digitSet[i];
+            ObjRender_SetX(sprDigitList, 523 + i * 12);
+
+            ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
+			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);
+			ObjSpriteList2D_AddVertex(sprDigitList);
+        }
+        yield;
+    }
+}
+
+task UpdatePlayerCount(graphicArr) {
+    loop {
+        let currPlCount = GetPlayerLife();
+        currPlCount = min(currPlCount, 8);
+        ascent (i in 0..8) {
+            if (i >= currPlCount) {
+                ObjSprite2D_SetSourceRect(graphicArr[i], 0, 0, 34, 34);
+                break;
+            }
+            ObjSprite2D_SetSourceRect(graphicArr[i], 162, 0, 193, 32);
+        }
+        yield;
+    }
+}
+
+task UpdateSpellCount(graphicArr) {
+    loop {
+        let currSpCount = GetPlayerSpell();
+        currSpCount = min(currSpCount, 8);
+        ascent (i in 0..8) {
+            if (i >= currSpCount) {
+                ObjSprite2D_SetSourceRect(graphicArr[i], 0, 39, 35, 72);
+                break;
+            }
+            ObjSprite2D_SetSourceRect(graphicArr[i], 162, 40, 194, 72);
+        }
+        yield;
+    }
+}
+
+task UpdateBossName(bossText) {
+    loop {
+        ObjText_SetText(bossText, GetCommonData("boss_name", ""));
+        yield;
+    }
+}
+
+function DigitToArray(let digit,let count) {
+	let res = [];
+	digit = truncate(digit);
+
+	loop {
+		let tnum = truncate(digit % 10);
+		digit /= 10;
+		res = [tnum] ~ res;
+		if(truncate(digit) == 0){break;}
+	}
+
+	loop(max(0, count - length(res))) {
+		res = [0] ~ res;
+	}
+	return res;
+}

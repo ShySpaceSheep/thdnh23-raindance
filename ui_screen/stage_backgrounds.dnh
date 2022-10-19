@@ -1,0 +1,68 @@
+#include "script/libraries/commons/bgstd_tasks.dnh"
+
+let stageBGAlpha = 255;
+let activeBossChara = KAGUYA;
+let currentStage;
+let bgMode = NORMAL;
+
+@Initialize {
+    RenderStageBG;
+}
+
+@Event {
+    alternative(GetEventType())
+    case(EV_START_BOSS_SPELL) {
+        RenderSpellBG;
+    } case (EV_END_BOSS_STEP) {
+        spellBg = false;
+    }
+}
+
+@MainLoop {
+    yield;
+}
+
+task RenderStageBG {
+    // TODO: activeStage is NULL
+    /*loop {
+        alternative(activeStage)
+        case(STAGE1) {
+
+        } case(STAGE2) {
+
+        } case(STAGE3) {
+
+        } case(STAGE4) {
+
+        } case(STAGE5) {
+
+        } case(STAGE6) {
+
+        } case(EXTRA) {
+
+        } others {
+            // Default stage background here
+        }
+        yield;
+    }*/
+}
+
+task RenderSpellBG {
+    spellBg = true;
+    if (bgMode == NORMAL) {
+        alternative(activeBossChara)
+        case(MARISA) {
+            RenderMarisaSpellBG;
+        } case(REISEN) {
+            RenderReisenSpellBG;
+        } case(MOKOU) {
+            RenderMokouSpellBG;
+        } case(KAGUYA) {
+            RenderKaguyaSpellBG;
+        } case(EIRIN) {
+            RenderEirinSpellBG;
+        } others {
+            // TODO: All-catch spell background.
+        }
+    }
+}
