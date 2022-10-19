@@ -1,0 +1,52 @@
+task EffectPentagram(obj) {
+    let graphic = "./../../../assets/img/pentagram1.png";
+
+    let pentagram = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjRender_SetBlendType(pentagram, BLEND_ADD_ARGB);
+    Obj_SetRenderPriority(pentagram, 0.5);
+    ObjPrim_SetTexture(pentagram, graphic);
+    ObjSprite2D_SetSourceRect(pentagram, 0, 0, 256, 256);
+    ObjSprite2D_SetDestRect(pentagram, -125, -125, 125, 125);
+    ObjRender_SetAlpha(pentagram, 145);
+    ObjRender_SetPosition(pentagram, ObjRender_GetX(obj), ObjRender_GetY(obj), 1);
+    ScalePentagram(pentagram);
+
+    let counter = 0;
+    loop {
+        ObjRender_SetPosition(pentagram, ObjMove_GetX(obj), ObjMove_GetY(obj), 1);
+        ObjRender_SetAngleZ(pentagram, -counter*2.5);
+
+        counter += 1.5;
+        yield;
+    }
+}
+
+task ScalePentagram(pentagram) {
+    let counter = 0;
+    let local_counter = 0;
+    let status = "spawning";
+
+    loop {
+        while (status == "spawning") {
+            ObjRender_SetScaleXYZ(pentagram, counter, counter, 1);
+
+
+            if (counter > 0.7)
+            {
+                status = "growing";
+            }
+
+            counter += 0.015;
+            yield;
+        }
+
+        while (status == "growing") {
+            ObjRender_SetScaleXYZ(pentagram, counter, counter, 1);
+
+                counter += sin(local_counter) * 0.0050;
+                local_counter += 2;
+                yield;
+        }
+        yield;
+    }
+}
