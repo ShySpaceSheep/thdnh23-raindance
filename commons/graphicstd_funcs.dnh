@@ -1,0 +1,58 @@
+function Create2DSpriteA1(texture, blendType, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom, destRectLeft, destRectTop, destRectRight, destRectBottom, renderPriority) {
+    let new2DSprite = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjPrim_SetTexture(new2DSprite, texture);
+    ObjRender_SetBlendType(new2DSprite, blendType);
+    Obj_SetRenderPriority(new2DSprite, renderPriority);
+    ObjSprite2D_SetSourceRect(new2DSprite, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom);
+    ObjSprite2D_SetDestRect(new2DSprite, destRectLeft, destRectTop, destRectRight, destRectBottom);
+    return new2DSprite;
+}
+
+function Create2DSpriteA2(texture, blendType, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom, destRectLeft, destRectTop, destRectRight, destRectBottom, x, y, scaleX, scaleY, scaleZ, alpha, renderPriority) {
+    let new2DSprite = Create2DSpriteA1(texture, blendType, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom, destRectLeft, destRectTop, destRectRight, destRectBottom, renderPriority);
+    ObjRender_SetScaleXYZ(new2DSprite, scaleX, scaleY, scaleZ);
+    ObjRender_SetX(new2DSprite, x);
+    ObjRender_SetY(new2DSprite, y);
+    ObjRender_SetAlpha(new2DSprite, alpha);
+    return new2DSprite;
+}
+
+// Blame Danmakufu for not letting me define struct-equivalents to avoid having a mouthful of parameters.
+function Create2DSpriteA3(texture, blendType, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom, destRectLeft, destRectTop, destRectRight, destRectBottom, x, y, scaleX, scaleY, scaleZ, colorR, colorG, colorB, alpha, renderPriority) {
+    let new2DSprite = Create2DSpriteA2(texture, blendType, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom, destRectLeft, destRectTop, destRectRight, destRectBottom, x, y, scaleX, scaleY, scaleZ, alpha, renderPriority);
+    ObjRender_SetColor(new2DSprite, colorR, colorG, colorB);
+    return new2DSprite;
+}
+
+function Create2DSpriteList(texture, blendType, x, y, scaleX, scaleY, scaleZ, renderPriority) {
+    let new2DSpriteList = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+    ObjPrim_SetTexture(new2DSpriteList, texture);
+    ObjRender_SetBlendType(new2DSpriteList, blendType);
+    ObjRender_SetX(new2DSpriteList, x);
+    ObjRender_SetY(new2DSpriteList, y);
+    ObjRender_SetScaleXYZ(new2DSpriteList, scaleX, scaleY, scaleZ);
+    Obj_SetRenderPriority(new2DSpriteList, renderPriority);
+    return new2DSpriteList;
+}
+
+function CreateTextA1(text, font, fontSize, isBold, x, y, txtColorR, txtColorG, txtColorB, renderPriority) {
+    let newTextObj = ObjText_Create();
+    ObjText_SetText(newTextObj, text);
+    ObjText_SetFontType(newTextObj, font);
+    ObjText_SetFontSize(newTextObj, fontSize);
+    ObjText_SetFontColorTop(newTextObj, txtColorR, txtColorG, txtColorB);
+    ObjText_SetFontColorBottom(newTextObj, txtColorR, txtColorG, txtColorB);
+    ObjText_SetFontBold(newTextObj, isBold);
+    ObjRender_SetX(newTextObj, x);
+    ObjRender_SetY(newTextObj, y);
+    Obj_SetRenderPriority(newTextObj, renderPriority);
+    return newTextObj;
+}
+
+function CreateTextA2(text, font, fontSize, isBold, x, y, txtColorR, txtColorG, txtColorB, borderColorR, borderColorG, borderColorB, borderWidth, renderPriority) {
+    let newTextObj = CreateTextA1(text, font, fontSize, isBold, x, y, txtColorR, txtColorG, txtColorB, renderPriority);
+    ObjText_SetFontBorderType(newTextObj, BORDER_FULL);
+    ObjText_SetFontBorderColor(newTextObj, borderColorR, borderColorG, borderColorB);
+    ObjText_SetFontBorderWidth(newTextObj, borderWidth);
+    return newTextObj;
+}

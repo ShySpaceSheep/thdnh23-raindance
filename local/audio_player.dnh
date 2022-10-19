@@ -1,0 +1,18 @@
+#include "script/definitions/constants/audio_constants.dnh"
+
+let nowPlayingTrack;
+
+// Danmakufu's sound manipulation and library is pretty shit ngl.
+function Play(audioID, volume) {
+    ObjSound_Play(audioID);
+    ObjSound_SetVolumeRate(audioID, volume);
+}
+
+function Stop(audioID, fadeTime) {
+    ObjSound_SetFade(audioID, fadeTime);
+    ObjSound_Stop(audioID);
+}
+
+function GetCurrentTrack() {
+    return nowPlayingTrack;
+}
