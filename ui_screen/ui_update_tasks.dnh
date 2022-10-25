@@ -16,7 +16,7 @@ task UpdateHighScore(digitCount, sprDigitList) {
 
         ascent(i in 0..digitCount) {
             let digit = digitSet[i];
-            ObjRender_SetX(sprDigitList, 523 + i * 12);
+            ObjRender_SetX(sprDigitList, 523 + i * 10);
 
             ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
 			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);
@@ -36,12 +36,21 @@ task UpdateScore(digitCount, sprDigitList) {
 
         ascent(i in 0..digitCount) {
             let digit = digitSet[i];
-            ObjRender_SetX(sprDigitList, 523 + i * 12);
+            ObjRender_SetX(sprDigitList, 523 + i * 10);
 
             ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
 			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);
 			ObjSpriteList2D_AddVertex(sprDigitList);
         }
+        yield;
+    }
+}
+
+task UpdatePlayerPower(powerIndicator) {
+    loop {
+        let power = GetPlayerPower();
+        let powerText = vtos("1.2f", power) ~ " / 4.00";
+        ObjText_SetText(powerIndicator, powerText);
         yield;
     }
 }
@@ -55,7 +64,7 @@ task UpdateGraze(digitCount, sprDigitList) {
 
         ascent(i in 0..digitCount) {
             let digit = digitSet[i];
-            ObjRender_SetX(sprDigitList, 523 + i * 12);
+            ObjRender_SetX(sprDigitList, 563 + i * 10);
 
             ObjSpriteList2D_SetSourceRect(sprDigitList, digit * 24, 0, (digit + 1) * 24.2, 26);
 			ObjSpriteList2D_SetDestRect(sprDigitList, 0, 0, 24, 25);

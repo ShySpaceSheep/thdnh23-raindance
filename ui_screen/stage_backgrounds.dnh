@@ -1,7 +1,7 @@
 #include "script/libraries/commons/bgstd_tasks.dnh"
 
 let stageBGAlpha = 255;
-let activeBossChara = KAGUYA;
+let activeBossChara = MARISA;
 let currentStage;
 let bgMode = NORMAL;
 
