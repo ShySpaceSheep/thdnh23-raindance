@@ -1,0 +1,15 @@
+#TouhouDanmakufu[Package]
+#Title["東方雨の女 ~ Uncover the Silvermist Fog!"]
+#Text["This is the whole control switch of the main game."]
+
+@Initialize {
+
+}
+
+@MainLoop {
+
+}
+
+@Finalize {
+    
+}

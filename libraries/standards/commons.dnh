@@ -1,0 +1,9 @@
+function GetVerticalCenter() {
+
+}
+function GetHorizontalCenter() {
+
+}
+function wait(frames) {
+    loop(frames) { yield; }
+}

@@ -1,0 +1,64 @@
+// The most basic sprite builder, won't really let you have that much control but it'll do the basic jobs well.
+function Create2DSpriteA1(texture, blendType, renderPriority, srcRectLeft,
+                        srcRectTop, srcRectRight, srcRectBottom, destRectLeft,
+                        destRectTop, destRectRight, destRectBottom) {
+    let new2DSprite = ObjPrim_Create(OBJ_SPRITE_2D);
+    ObjPrim_SetTexture(new2DSprite, texture);
+    ObjRender_SetBlendType(new2DSprite, blendType);
+    Obj_SetRenderPriority(new2DSprite, renderPriority);
+    ObjSprite2D_SetSourceRect(new2DSprite, srcRectLeft, srcRectTop, srcRectRight, srcRectBottom);
+    ObjSprite2D_SetDestRect(new2DSprite, destRectLeft, destRectTop, destRectRight, destRectBottom);
+    return new2DSprite;
+}
+
+// A more intermediate kind of sprite builder, letting you tweak render location, alpha, and scale.
+function Create2DSpriteA2(texture, blendType, renderPriority, srcRectLeft,
+                        srcRectTop, srcRectRight, srcRectBottom, destRectLeft,
+                        destRectTop, destRectRight, destRectBottom, xRender, 
+                        yRender, xScale, yScale, alphaVal) {
+    let new2DSprite = Create2DSpriteA1(texture, blendType, renderPriority, srcRectLeft,
+                                    srcRectTop, srcRectRight, srcRectBottom, destRectLeft,
+                                    destRectTop, destRectRight, destRectBottom);
+    ObjRender_SetScaleXYZ(new2DSprite, xScale, yScale, 0);
+    ObjRender_SetX(new2DSprite, xRender);
+    ObjRender_SetY(new2DSprite, yRender);
+    ObjRender_SetAlpha(new2DSprite, alphaVal);
+    return new2DSprite;
+}
+
+function Create2DSpriteList(texture, blendType, renderPriority, xRender, yRender, xScale, yScale) {
+    let new2DSpriteList = ObjPrim_Create(OBJ_SPRITE_LIST_2D);
+    ObjPrim_SetTexture(new2DSpriteList, texture);
+    ObjRender_SetBlendType(new2DSpriteList, blendType);
+    ObjRender_SetX(new2DSpriteList, xRender);
+    ObjRender_SetY(new2DSpriteList, yRender);
+    ObjRender_SetScaleXYZ(new2DSpriteList, scaleX, scaleY, 1);
+    Obj_SetRenderPriority(new2DSpriteList, renderPriority);
+    return new2DSpriteList;
+}
+
+function CreateTextA1(text, fontFamily, fontSize, xRender, yRender, txtColorR,
+                    txtColorG, txtColorB, isBoldfaced, renderPriority) {
+    let newTextObj = ObjText_Create();
+    ObjText_SetText(newTextObj, text);
+    ObjText_SetFontType(newTextObj, fontFamily);
+    ObjText_SetFontSize(newTextObj, fontSize);
+    ObjText_SetFontColorTop(newTextObj, txtColorR, txtColorG, txtColorB);
+    ObjText_SetFontColorBottom(newTextObj, txtColorR, txtColorG, txtColorB);
+    ObjText_SetFontBold(newTextObj, isBoldfaced);
+    ObjRender_SetX(newTextObj, xRender);
+    ObjRender_SetY(newTextObj, yRender);
+    Obj_SetRenderPriority(newTextObj, renderPriority);
+    return newTextObj;
+}
+
+function CreateTextA2(text, fontFamily, fontSize, xcRender, yRender, txtColorR,
+                    txtColorG, txtColorB, borderColorR, borderColorG, borderColorB,
+                    borderWidth, isBoldfaced, renderPriority) {
+    let newTextObj = CreateTextA1(text, fontFamily, fontSize, xRender, yRender, txtColorR, 
+                                txtColorG, txtColorB, isBoldfaced, renderPriority);
+    ObjText_SetFontBorderType(newTextObj, BORDER_FULL);
+    ObjText_SetFontBorderColor(newTextObj, borderColorR, borderColorG, borderColorB);
+    ObjText_SetFontBorderWidth(newTextObj, borderWidth);
+    return newTextObj;
+}
