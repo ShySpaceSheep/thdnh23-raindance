@@ -1,0 +1,52 @@
+let pathToBgm = "../../assets/bgm";
+let pathToSfx = "../../assets/sfx";
+
+let bgmPath = [
+    pathToBgm ~ "/old_adam_bar.ogg",
+    pathToBgm ~ "/th_lostword_yuyuko.ogg"
+];
+let sfxPath = [
+    pathToSfx ~ "/bullet.wav",
+    pathToSfx ~ "/sparkle.wav",
+    pathToSfx ~ "/laser.wav",
+    pathToSfx ~ "/laser2.wav",
+    pathToSfx ~ "/enem_spell.wav",
+    pathToSfx ~ "/captured.wav",
+    pathToSfx ~ "/timeout.wav",
+    pathToSfx ~ "/timeout2.wav",
+    pathToSfx ~ "/enem_pichuun.wav",
+    pathToSfx ~ "/charge.wav",
+    pathToSfx ~ "/release.wav"
+];
+
+let bgm = [];
+ascent (i in 0..length(bgmPath)) {
+    let bgmObj = ObjSound_Create();
+    ObjSound_Load(bgmObj, bgmPaths[i]);
+    ObjSound_SetSoundDivision(bgmObj, SOUND_BGM);
+    ObjSound_SetLoopEnable(bgmObj, true);
+    bgm = bgm ~ [bgmObj];
+}
+let sfx = [];
+ascent (i in 0..length(sfxPath)) {
+    let sfxObj = ObjSound_Create();
+    ObjSound_Load(sfxObj, sfxPaths[i]);
+    ObjSound_SetSoundDivision(sfxObj, SOUND_SE);
+    sfx = sfx ~ [sfxObj];
+}
+
+let BULLET = sfx[0];
+let SPARKLE = sfx[1];
+let LASER = sfx[2];
+let LASER2 = sfx[3];
+let ENEM_SPELL = sfx[4];
+let SPELL_CAPTURED = sfx[5];
+let TIMEOUT = sfx[6];
+let TIMEOUT2 = sfx[7];
+let ENEM_PICHUUN = sfx[8];
+let CHARGE = sfx[9];
+let RELEASE = sfx[10];
+
+let OLD_ADAM_BAR = bgm[0];
+ObjSound_SetLoopTime(OLD_ADAM_BAR, 0, 192.151);
+let LOSTWORD_YUYUKO = bgm[1];

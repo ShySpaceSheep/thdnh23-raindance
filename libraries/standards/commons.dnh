@@ -1,9 +1,26 @@
-function GetVerticalCenter() {
-
+task UpdateObjectCollision(obj) {
+    ObjEnemy_SetIntersectionCircleToShot(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 32);
+    ObjEnemy_SetIntersectionCircleToPlayer(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 24);
 }
-function GetHorizontalCenter() {
 
+task MoveAtTopRandom(obj) {
+    ObjMove_SetDestAtWeight(obj, rand(GetCenterX() + 90, GetCenterX() - 90), rand(GetCenterY() - 60, GetCenterY() - 120), 15, 5.5);
 }
+
+task NegateSpellDamage(obj) {
+    ObjEnemy_SetDamageRate(objBoss, 0, 0);
+    wait(290);
+    ObjEnemy_SetDamageRate(objBoss, 100, 0);
+}
+
+function GetXCenter() {
+    return GetStgFrameWidth() / 2;
+}
+
+function GetYCenter() {
+    return GetStgFrameHeight() / 2;
+}
+
 function wait(frames) {
     loop(frames) { yield; }
 }

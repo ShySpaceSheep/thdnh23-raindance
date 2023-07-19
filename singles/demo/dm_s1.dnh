@@ -1,0 +1,16 @@
+#TouhouDanmakufu[Single]
+#ScriptVersion[3]
+#Title["dm_s1"]
+#System["script/dnh.dnh"]
+
+@Initialize {
+
+}
+
+@Event {
+
+}
+
+@MainLoop {
+    
+}
