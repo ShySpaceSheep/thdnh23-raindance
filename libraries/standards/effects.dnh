@@ -1,0 +1,48 @@
+task CreatePentagramFX(objEnemy) {
+    let spinFrames = 0;
+    let texture = "./../../../assets/img/pentagram1.png";
+
+    let pentagram = Create2DSpriteA1(texture, BLEND_ADD_ARGB, 0.5, 0, 0, 256, 256, -125, -125, 125, 125);
+    ObjRender_SetPosition(pentagram, ObjRender_GetX(objEnemy), ObjRender_GetY(objEnemy), 1);
+    ObjRender_SetAlpha(pentagram, 145);
+    // TODO: Change out this five year old pentagram scaling procedure.
+    ScalePentagram(pentagram);
+
+    while (!Obj_IsDeleted(objEnemy)) {
+        ObjRender_SetPosition(pentagram, ObjMove_GetX(objEnemy), ObjMove_GetY(objEnemy), 1);
+        ObjRender_SetAngleZ(pentagram, spinFrames * -2.5);
+
+        spinFrames += 1.75;
+        yield;
+    }
+}
+
+task ScalePentagram(pentagram) {
+    let counter = 0;
+    let local_counter = 0;
+    let status = "spawning";
+
+    loop {
+        while (status == "spawning") {
+            ObjRender_SetScaleXYZ(pentagram, counter, counter, 1);
+
+
+            if (counter > 0.7)
+            {
+                status = "growing";
+            }
+
+            counter += 0.015;
+            yield;
+        }
+
+        while (status == "growing") {
+            ObjRender_SetScaleXYZ(pentagram, counter, counter, 1);
+
+                counter += sin(local_counter) * 0.0050;
+                local_counter += 2;
+                yield;
+        }
+        yield;
+    }
+}

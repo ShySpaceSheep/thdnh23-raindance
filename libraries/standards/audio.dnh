@@ -1,0 +1,11 @@
+#include "script/definitions/audio_data.dnh"
+
+task Play(audioID, volume) {
+    ObjSound_Play(audioID);
+    ObjSound_SetVolumeRate(audioID, volume);
+}
+
+task Stop(audioID, fadeTime) {
+    ObjSound_SetFade(audioID, fadeTime);
+    ObjSound_Stop(audioID);
+}

@@ -35,6 +35,7 @@ ascent (i in 0..length(sfxPath)) {
     sfx = sfx ~ [sfxObj];
 }
 
+// Constant definitions goes here:
 let BULLET = sfx[0];
 let SPARKLE = sfx[1];
 let LASER = sfx[2];
@@ -49,4 +50,5 @@ let RELEASE = sfx[10];
 
 let OLD_ADAM_BAR = bgm[0];
 ObjSound_SetLoopTime(OLD_ADAM_BAR, 0, 192.151);
+
 let LOSTWORD_YUYUKO = bgm[1];

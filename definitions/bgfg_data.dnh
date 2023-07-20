@@ -41,3 +41,36 @@ ascent (i in 0..length(spForegrounds)) {
     ObjRender_SetAlpha(renderObj, 0);
     sprite2DFGObjects = sprite2DFGObjects ~ [renderObj];
 }
+
+// Constant definitions goes here:
+let MARISA_SPELLBG = sprite2DBGObjects[0];
+let REISEN_SPELLBG = sprite2DBGObjects[1];
+let MOKOU_SPELLBG = sprite2DBGObjects[2];
+let KAGUYA_SPELLBG = sprite2DBGObjects[3];
+let EIRIN_SPELLBG = sprite2DBGObjects[4];
+
+let MARISA_SPELLFG = sprite2DFGObjects[0];
+let REISEN_SPELLFG = sprite2DFGObjects[1];
+let MOKOU_SPELLFG = sprite2DFGObjects[2];
+let KAGUYA_SPELLFG = sprite2DFGObjects[3];
+let EIRIN_SPELLFG = sprite2DFGObjects[4];
+
+// Stage Background IDs
+let MARISA = 0;
+let REISEN = 1;
+let MOKOU = 2;
+let KAGUYA = 3;
+let EIRIN = 4;
+
+// Stage IDs
+let STAGE1 = 1;
+let STAGE2 = 2;
+let STAGE3 = 3;
+let STAGE4 = 4;
+let STAGE5 = 5;
+let STAGE6 = 6;
+let EXTRA = 7;
+
+// Spell BG Type IDs
+let NORMAL = 0;
+let SPECIAL = 1;
