@@ -1,3 +1,5 @@
+#include "script/libraries/standards/graphics.dnh"
+
 task CreatePentagramFX(objEnemy) {
     let spinFrames = 0;
     let texture = "./../../../assets/img/pentagram1.png";

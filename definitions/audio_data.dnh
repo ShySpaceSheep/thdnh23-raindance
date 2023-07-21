@@ -1,11 +1,11 @@
 let pathToBgm = "../../assets/bgm";
 let pathToSfx = "../../assets/sfx";
 
-let bgmPath = [
+let bgmPaths = [
     pathToBgm ~ "/old_adam_bar.ogg",
     pathToBgm ~ "/th_lostword_yuyuko.ogg"
 ];
-let sfxPath = [
+let sfxPaths = [
     pathToSfx ~ "/bullet.wav",
     pathToSfx ~ "/sparkle.wav",
     pathToSfx ~ "/laser.wav",
@@ -20,7 +20,7 @@ let sfxPath = [
 ];
 
 let bgm = [];
-ascent (i in 0..length(bgmPath)) {
+ascent (i in 0..length(bgmPaths)) {
     let bgmObj = ObjSound_Create();
     ObjSound_Load(bgmObj, bgmPaths[i]);
     ObjSound_SetSoundDivision(bgmObj, SOUND_BGM);
@@ -28,7 +28,7 @@ ascent (i in 0..length(bgmPath)) {
     bgm = bgm ~ [bgmObj];
 }
 let sfx = [];
-ascent (i in 0..length(sfxPath)) {
+ascent (i in 0..length(sfxPaths)) {
     let sfxObj = ObjSound_Create();
     ObjSound_Load(sfxObj, sfxPaths[i]);
     ObjSound_SetSoundDivision(sfxObj, SOUND_SE);

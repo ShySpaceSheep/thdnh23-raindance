@@ -1,6 +1,6 @@
 local {
 	let current = GetCurrentScriptDirectory();
-	let path = current ~ "./shot_data.dnh";
+	let path = current ~ "/shot_data.dnh";
 	LoadEnemyShotData(path);
 }
 

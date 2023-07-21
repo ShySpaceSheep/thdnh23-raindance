@@ -1,10 +1,29 @@
+task BossDefeatHandler(objBoss, bossScene) {
+    if (ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+        yield;
+    } else {
+        if (ObjEnemyBossScene_GetInfo(bossScene, INFO_PLAYER_SHOOTDOWN_COUNT) +
+        ObjEnemyBossScene_GetInfo(bossScene, INFO_PLAYER_SPELL_COUNT) == 0) {
+            AddScore(ObjEnemyBossScene_GetInfo(bossScene, INFO_SPELL_SCORE));
+        }
+
+        BFX_Explosion(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 75, 15);
+        BFX_Release(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 230, 50);
+        Obj_Delete(objBoss);
+        DeleteShotAll(TYPE_ALL, TYPE_ITEM);
+
+        SetAutoDeleteObject(true);
+        CloseScript(GetOwnScriptID);
+    }
+}
+
 task UpdateObjectCollision(obj) {
     ObjEnemy_SetIntersectionCircleToShot(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 32);
     ObjEnemy_SetIntersectionCircleToPlayer(obj, ObjMove_GetX(obj), ObjMove_GetY(obj), 24);
 }
 
 task MoveAtTopRandom(obj) {
-    ObjMove_SetDestAtWeight(obj, rand(GetCenterX() + 90, GetCenterX() - 90), rand(GetCenterY() - 60, GetCenterY() - 120), 15, 5.5);
+    ObjMove_SetDestAtWeight(obj, rand(GetXCenter() + 90, GetXCenter() - 90), rand(GetYCenter() - 60, GetYCenter() - 120), 15, 5.5);
 }
 
 task NegateSpellDamage(obj) {

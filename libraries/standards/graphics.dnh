@@ -32,7 +32,7 @@ function Create2DSpriteList(texture, blendType, renderPriority, xRender, yRender
     ObjRender_SetBlendType(new2DSpriteList, blendType);
     ObjRender_SetX(new2DSpriteList, xRender);
     ObjRender_SetY(new2DSpriteList, yRender);
-    ObjRender_SetScaleXYZ(new2DSpriteList, scaleX, scaleY, 1);
+    ObjRender_SetScaleXYZ(new2DSpriteList, xScale, yScale, 1);
     Obj_SetRenderPriority(new2DSpriteList, renderPriority);
     return new2DSpriteList;
 }
@@ -52,7 +52,7 @@ function CreateTextA1(text, fontFamily, fontSize, xRender, yRender, txtColorR,
     return newTextObj;
 }
 
-function CreateTextA2(text, fontFamily, fontSize, xcRender, yRender, txtColorR,
+function CreateTextA2(text, fontFamily, fontSize, xRender, yRender, txtColorR,
                     txtColorG, txtColorB, borderColorR, borderColorG, borderColorB,
                     borderWidth, isBoldfaced, renderPriority) {
     let newTextObj = CreateTextA1(text, fontFamily, fontSize, xRender, yRender, txtColorR, 

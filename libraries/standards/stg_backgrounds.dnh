@@ -1,1 +1,174 @@
 #include "script/definitions/bgfg_data.dnh"
+
+let currActiveFrame = 0;
+let activeBossChara = MARISA;
+let spellBGAlpha = 0;
+let isSpellAttack = false;
+let bgMode = NORMAL;
+
+@Initialize {
+    RenderStageBG;
+}
+
+@Event {
+    alternative(GetEventType())
+    case(EV_START_BOSS_SPELL) {
+        RenderSpellBG;
+    } case (EV_END_BOSS_STEP) {
+        isSpellAttack = false;
+    }
+}
+
+@MainLoop {
+    yield;
+}
+
+task RenderStageBG {
+    // TODO: activeStage is NULL
+    /*loop {
+        alternative(activeStage)
+        case(STAGE1) {
+
+        } case(STAGE2) {
+
+        } case(STAGE3) {
+
+        } case(STAGE4) {
+
+        } case(STAGE5) {
+
+        } case(STAGE6) {
+
+        } case(EXTRA) {
+
+        } others {
+            // Default stage background here
+        }
+        yield;
+    }*/
+}
+
+task RenderSpellBG {
+    isSpellAttack = true;
+    if (bgMode == NORMAL) {
+        alternative(activeBossChara)
+        case(MARISA) {
+            RenderMarisaSpellBG;
+        } case(REISEN) {
+            RenderReisenSpellBG;
+        } case(MOKOU) {
+            RenderMokouSpellBG;
+        } case(KAGUYA) {
+            RenderKaguyaSpellBG;
+        } case(EIRIN) {
+            RenderEirinSpellBG;
+        } others {
+            // TODO: All-catch spell background.
+        }
+    }
+}
+
+task RenderMarisaSpellBG {
+    while (isSpellAttack) {
+        SetBGFGAlphaVisibility(MARISA_SPELLBG, MARISA_SPELLFG, spellBGAlpha);
+        ObjSprite2D_SetSourceRect(MARISA_SPELLFG, 0, 0 + (currActiveFrame*4) % 512, 512, 512 + (currActiveFrame*4) % 512);
+
+        if (spellBGAlpha <= 256) {spellBGAlpha += 10;}   // I'm trying to prevent a possible overflow.
+        currActiveFrame++;
+        yield;
+    }
+
+    // Once the spell phase is over, break away from the task.
+    spellBGAlpha = 0;
+    BreakSpellBG(MARISA_SPELLBG, MARISA_SPELLFG, spellBGAlpha);
+    return;
+}
+
+task RenderReisenSpellBG {
+    while (isSpellAttack) {
+        SetBGFGAlphaVisibility(REISEN_SPELLBG, REISEN_SPELLFG, spellBGAlpha);
+        ObjRender_SetAngleZ(REISEN_SPELLFG, -currActiveFrame*0.8);
+        ObjRender_SetAngleZ(REISEN_SPELLBG, currActiveFrame*1.0);
+
+        if (spellBGAlpha <= 256) {spellBGAlpha += 5;}   // I'm trying to prevent a possible overflow.
+        currActiveFrame++;
+        yield;
+    }
+
+    spellBGAlpha = 0;
+    BreakSpellBG(REISEN_SPELLBG, REISEN_SPELLFG, spellBGAlpha);
+    return;
+}
+
+task RenderMokouSpellBG {
+    while (isSpellAttack) {
+        SetBGFGAlphaVisibility(MOKOU_SPELLBG, MOKOU_SPELLFG, spellBGAlpha);
+        ObjRender_SetAngleZ(MOKOU_SPELLFG, currActiveFrame*1.0);
+
+        if (spellBGAlpha <= 256) {spellBGAlpha += 10;}
+        currActiveFrame++;
+        yield;
+    }
+
+    spellBGAlpha = 0;
+    BreakSpellBG(MOKOU_SPELLBG, MOKOU_SPELLFG, spellBGAlpha);
+    return;
+}
+
+task RenderKaguyaSpellBG {
+    // Override definition defaults for the render priority and image source dimensions.
+    ObjSprite2D_SetSourceRect(KAGUYA_SPELLBG, 0, 0, 512, 592);
+    Obj_SetRenderPriority(KAGUYA_SPELLFG, 0.20);
+
+    while (isSpellAttack) {
+        SetBGFGAlphaVisibility(KAGUYA_SPELLBG, KAGUYA_SPELLFG, spellBGAlpha);
+        ObjSprite2D_SetSourceRect(KAGUYA_SPELLFG, 0, 0 + (currActiveFrame * 0.7) % 512, 512, 512 + (currActiveFrame * 0.7) % 512);
+
+        if (spellBGAlpha <= 256) {spellBGAlpha += 10;}
+        currActiveFrame++;
+        yield;
+    }
+
+    spellBGAlpha = 0;
+    BreakSpellBG(KAGUYA_SPELLBG, KAGUYA_SPELLFG, spellBGAlpha);
+    return;
+}
+
+task RenderEirinSpellBG {
+    Obj_SetRenderPriority(EIRIN_SPELLFG, 0.20);
+    while (isSpellAttack) {
+        SetBGFGAlphaVisibility(EIRIN_SPELLBG, EIRIN_SPELLFG, spellBGAlpha);
+        ObjSprite2D_SetSourceRect(EIRIN_SPELLFG, 0, 0 + (currActiveFrame*4) % 512, 512, 512 + (currActiveFrame*4) % 512);
+
+        if (spellBGAlpha <= 256) {spellBGAlpha += 10;}
+        currActiveFrame++;
+        yield;
+    }
+
+    spellBGAlpha = 0;
+    BreakSpellBG(EIRIN_SPELLBG, EIRIN_SPELLFG, spellBGAlpha);
+    return;
+}
+
+function SetSpellBG(spellbgID) {
+    spellbgID = activeBossChara;
+}
+
+function SetBGAlphaVisibility(renderObjBG, alpha) {
+    ObjRender_SetAlpha(renderObjBG, alpha);
+    Obj_SetVisible(renderObjBG, alpha > 0);
+}
+
+function SetFGAlphaVisibility(renderObjFG, alpha) {
+    ObjRender_SetAlpha(renderObjFG, alpha);
+    Obj_SetVisible(renderObjFG, alpha > 0);
+}
+
+function SetBGFGAlphaVisibility(renderObjBG, renderObjFG, alpha) {
+    SetBGAlphaVisibility(renderObjBG, alpha);
+    SetFGAlphaVisibility(renderObjFG,alpha)
+}
+
+function BreakSpellBG(renderObjBG, renderObjFG, alpha) {
+    SetBGFGAlphaVisibility(renderObjBG, renderObjFG, alpha)
+}
