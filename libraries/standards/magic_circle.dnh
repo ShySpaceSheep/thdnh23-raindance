@@ -1,5 +1,11 @@
+let texture = "./../../../assets/img/MagicCircle_Outer.png";
+let texture2 = "./../../../assets/img/MagicCircle_Inner.png";
+let objScene = GetEnemyBossSceneObjectID();
+let objBoss = GetEnemyBossObjectID()[0];
+
 @Initialize {
-    
+    TMagicCircle;
+    TMagicCircle2;
 }
 
 @MainLoop {
@@ -10,6 +16,114 @@
 
 }
 
-task MagicCircle {
+task TMagicCircle {
+    let VERTEX_COUNT = 32;
+    let MAX_RADIUS = 186;
 
+    let listRadius = [];
+    loop(VERTEX_COUNT) { listRadius = listRadius ~ [0]; }
+
+    let magicCircle = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+    ObjPrim_SetTexture(magicCircle, texture);
+    ObjRender_SetBlendType(magicCircle, BLEND_ADD_ARGB);
+    ObjPrim_SetPrimitiveType(magicCircle, PRIMITIVE_TRIANGLESTRIP);
+    ObjPrim_SetVertexCount(magicCircle, VERTEX_COUNT);
+    Obj_SetRenderPriority(magicCircle, 0.25);
+    
+    ascent (vIndex in 0..VERTEX_COUNT / 2) {
+        let left = vIndex * 16;
+        let edge = vIndex * 2;
+        ObjPrim_SetVertexUVT(magicCircle, edge + 0, left, 0);
+		ObjPrim_SetVertexUVT(magicCircle, edge + 1, left, 13);
+
+        ObjPrim_SetVertexAlpha(magicCircle, edge + 0, 130);
+        ObjPrim_SetVertexAlpha(magicCircle, edge + 1, 130);
+    }
+
+    let angle = 0;
+    while (!Obj_IsDeleted(objBoss)) {
+        angle += 360 / VERTEX_COUNT / 4;
+
+        ascent (vIndex in 0..VERTEX_COUNT / 2) {
+            let edge = vIndex * 2;
+            let edgeAngle = 360 / (VERTEX_COUNT / 2 - 1) * vIndex;
+
+            let vx1 = listRadius[edge] * cos(edgeAngle);
+			let vy1 = listRadius[edge] * sin(edgeAngle);
+			ObjPrim_SetVertexPosition(magicCircle, edge + 0, vx1, vy1, 0);
+
+			let vx2 = listRadius[edge + 1] * cos(edgeAngle);
+			let vy2 = listRadius[edge + 1] * sin(edgeAngle);
+			ObjPrim_SetVertexPosition(magicCircle, edge + 1, vx2, vy2, 0);
+
+            let drOut = (MAX_RADIUS - listRadius[edge]) / 8;
+            listRadius[edge] = listRadius[edge] + drOut;
+
+            let rRateIn = 1 - 0.12;
+            let drIn = (MAX_RADIUS * rRateIn - listRadius[edge + 1]) / 8;
+            listRadius[edge + 1] = listRadius[edge + 1] + drIn;
+        }
+        ObjRender_SetPosition(magicCircle, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1);
+        ObjRender_SetAngleZ(magicCircle, angle);
+        yield;
+    }
+    Obj_Delete(magicCircle);
+    CloseScript(GetOwnScriptID());
+}
+
+// TODO: This is very bad, duplicating computations with the above.
+// Only for temporary purposes only for checking if the textures are the same from the original game.
+task TMagicCircle2 {
+    let VERTEX_COUNT = 32;
+    let MAX_RADIUS = 170;
+
+    let listRadius = [];
+    loop(VERTEX_COUNT) { listRadius = listRadius ~ [0]; }
+
+    let magicCircle = ObjPrim_Create(OBJ_PRIMITIVE_2D);
+    ObjPrim_SetTexture(magicCircle, texture2);
+    ObjRender_SetBlendType(magicCircle, BLEND_ADD_ARGB);
+    ObjPrim_SetPrimitiveType(magicCircle, PRIMITIVE_TRIANGLESTRIP);
+    ObjPrim_SetVertexCount(magicCircle, VERTEX_COUNT);
+    Obj_SetRenderPriority(magicCircle, 0.25);
+    
+    ascent (vIndex in 0..VERTEX_COUNT / 2) {
+        let left = vIndex * 16;
+        let edge = vIndex * 2;
+        ObjPrim_SetVertexUVT(magicCircle, edge + 0, left, 0);
+		ObjPrim_SetVertexUVT(magicCircle, edge + 1, left, 13);
+
+        ObjPrim_SetVertexAlpha(magicCircle, edge + 0, 130);
+        ObjPrim_SetVertexAlpha(magicCircle, edge + 1, 130);
+    }
+
+    let angle = 0;
+    while (!Obj_IsDeleted(objBoss)) {
+        angle -= 360 / VERTEX_COUNT / 4;
+
+        ascent (vIndex in 0..VERTEX_COUNT / 2) {
+            let edge = vIndex * 2;
+            let edgeAngle = 360 / (VERTEX_COUNT / 2 - 1) * vIndex;
+
+            let vx1 = listRadius[edge] * cos(edgeAngle);
+			let vy1 = listRadius[edge] * sin(edgeAngle);
+			ObjPrim_SetVertexPosition(magicCircle, edge + 0, vx1, vy1, 0);
+
+			let vx2 = listRadius[edge + 1] * cos(edgeAngle);
+			let vy2 = listRadius[edge + 1] * sin(edgeAngle);
+			ObjPrim_SetVertexPosition(magicCircle, edge + 1, vx2, vy2, 0);
+
+            let drOut = (MAX_RADIUS - listRadius[edge]) / 8;
+            listRadius[edge] = listRadius[edge] + drOut;
+
+            let rRateIn = 1 - 0.12;
+            let drIn = (MAX_RADIUS * rRateIn - listRadius[edge + 1]) / 8;
+            listRadius[edge + 1] = listRadius[edge + 1] + drIn;
+        }
+        ObjRender_SetPosition(magicCircle, ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 1);
+        ObjRender_SetAngleZ(magicCircle, angle);
+        yield;
+    }
+    Obj_Delete(magicCircle);
+    CloseScript(GetOwnScriptID());
 }
