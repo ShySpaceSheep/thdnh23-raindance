@@ -1,0 +1,32 @@
+#TouhouDanmakufu[Plural]
+#ScriptVersion[3]
+#Title["enem_dm"]
+#System["script/libraries/standards/system.dnh"]
+
+@Initialize {
+    TBossPlural;
+}
+
+@Event {
+
+}
+
+@MainLoop {
+    yield;
+}
+
+task TBossPlural {
+    let demoPath = "script/singles/demo/";
+    let objScene = ObjEnemyBossScene_Create();
+
+    ObjEnemyBossScene_Add(objScene, 0, demoPath ~ "dm_ns1.dnh");
+    ObjEnemyBossScene_Add(objScene, 0, demoPath ~ "dm_s1.dnh");
+    ObjEnemyBossScene_Add(objScene, 1, demoPath ~ "dm_ns2.dnh");
+    ObjEnemyBossScene_Add(objScene, 1, demoPath ~ "dm_s2.dnh");
+
+    ObjEnemyBossScene_LoadInThread(objScene);
+    ObjEnemyBossScene_Regist(objScene);
+
+    while (!Obj_IsDeleted(objScene)) { yield; }
+    CloseScript(GetOwnScriptID());
+}

@@ -4,7 +4,7 @@
 #System["script/libraries/standards/system.dnh"]
 #include "script/libraries/standards/imports.dnh"
 
-SetCommonData("boss_name", "Marisa Kirisame");
+SetCommonData("CURRENT_BOSS", "Marisa Kirisame");
 let currentFrame = 0;
 let objScene = GetEnemyBossSceneObjectID();
 let objBoss;
@@ -14,7 +14,7 @@ let objPlayer;
     objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
     objPlayer = GetPlayerObjectID();
     ObjEnemy_Regist(objBoss);
-    ObjMove_SetPosition(objBoss, 388, 140);
+    //ObjMove_SetPosition(objBoss, 388, 140);
     ObjMove_SetDestAtWeight(objBoss, GetXCenter(), GetYCenter(), 15, 5.5);
     ObjEnemyBossScene_StartSpell(GetEnemyBossSceneObjectID);
 
@@ -57,7 +57,6 @@ task TShoot {
             }
             wait(10);
         }
-
         wait(180);
     }
 }

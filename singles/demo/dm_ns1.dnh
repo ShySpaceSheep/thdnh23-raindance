@@ -1,10 +1,25 @@
 #TouhouDanmakufu[Single]
 #ScriptVersion[3]
 #Title["dm_ns1"]
-#System["script/dnh.dnh"]
+#System["script/libraries/standards/system.dnh"]
+#include "script/libraries/standards/imports.dnh"
+
+SetCommonData("CURRENT_BOSS", "Marisa Kirisame");
+let currentFrame = 0;
+let objScene = GetEnemyBossSceneObjectID();
+let objBoss;
+let objPlayer;
 
 @Initialize {
+    objBoss = ObjEnemy_Create(OBJ_ENEMY_BOSS);
+    objPlayer = GetPlayerObjectID();
+    ObjEnemy_Regist(objBoss);
+    ObjMove_SetDestAtWeight(objBoss, GetXCenter(), GetYCenter(), 15, 5.5);
 
+    BFX_Init();
+    TWaveCircle();
+    renderMarisaIN(objBoss, 2);
+    CreatePentagramFX(objBoss);
 }
 
 @Event {
@@ -17,5 +32,27 @@
 }
 
 @MainLoop {
+    UpdateObjectCollision(objBoss);
+    BossDefeatHandler(objBoss, objScene);
 
+    if (currentFrame == 60) { TShoot; }
+    if (currentFrame % 180 == 0) { MoveAtTopRandom(objBoss); }
+
+    currentFrame++;
+    yield;
+}
+
+task TShoot {
+    while(ObjEnemy_GetInfo(objBoss, INFO_LIFE) > 0) {
+        ascent (i in 0..3) {
+            let circularAngle = GetAngleToPlayer(objBoss) + i * 20;
+            ascent (i in 0..25) {
+                CreateShotA2(ObjMove_GetX(objBoss), ObjMove_GetY(objBoss), 0.5, circularAngle, 0.05, 3.5, L_STAR_Y, 10);
+                Play(BULLET, 15);
+                circularAngle += 360/25;
+            }
+            wait(10);
+        }
+        wait(180);
+    }
 }

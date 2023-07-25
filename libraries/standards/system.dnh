@@ -20,13 +20,14 @@ InstallFont(fontAssetsPath ~ "Russell Square Regular.ttf");
 }
 
 @Event {
-   alternative (GetEventType())
-   case (EV_START_BOSS_SPELL) {
+    alternative (GetEventType())
+    case (EV_START_BOSS_SPELL) {
+        StartScript(LoadScript("script/libraries/standards/magic_circle.dnh"));
+    } case (EV_GAIN_SPELL) {
 
-   }
-   case (EV_GAIN_SPELL) {
+    } case (EV_USER_SYSTEM) {
 
-   }
+    }
 }
 
 @MainLoop {
@@ -83,8 +84,35 @@ task TDrawPlayerValues {
 task TDrawBossInfo {
     let bossNameText = CreateTextA1("", "Russell Square", 13, 38, 22, 15, 196, 54, false, 1.0);
     ObjText_SetFontColorBottom(bossNameText, 10, 136, 0);
+    TDrawBossTimer;
     UpdateBossName(bossNameText);
 
+}
+task TDrawBossTimer {
+    let TIMER_DIGITS = 2;
+    let currentBossScene = ID_INVALID;
+    let digitTextures = Create2DSpriteList(imgAssetsPath ~ "spr_thdigits.png", BLEND_ALPHA, 0.80, 0, 60, 1, 1);
+
+    loop {
+        currentBossScene = GetEnemyBossSceneObjectID();
+        ObjSpriteList2D_ClearVertexCount(digitTextures);
+
+        if (currentBossScene != ID_INVALID) {
+            let currentTimer = ObjEnemyBossScene_GetInfo(currentBossScene, INFO_TIMER);
+            currentTimer = min(currentTimer, 99);
+            let digitSet = DigitToArray(currentTimer, TIMER_DIGITS);
+            ObjSpriteList2D_ClearVertexCount(digitTextures);
+
+            ascent(i in 0..TIMER_DIGITS) {
+                let digit = digitSet[i];
+                ObjRender_SetX(digitTextures, 175 + i * 16);
+                ObjSpriteList2D_SetSourceRect(digitTextures, digit * 24, 0, (digit + 1) * 24.2, 26);
+                ObjSpriteList2D_SetDestRect(digitTextures, 0, 0, 24, 25);
+                ObjSpriteList2D_AddVertex(digitTextures);
+            }
+        }
+        yield;
+    }
 }
 task TDrawMisc {
     let fpsTxt = CreateTextA2("...", "Russell Square", 10, 0, GetScreenHeight() - 15, 255, 255, 255, 0, 0 , 0, 2, false, 1.0);
@@ -202,7 +230,7 @@ task UpdateSpellCount(graphicArr) {
 
 task UpdateBossName(bossText) {
     loop {
-        ObjText_SetText(bossText, GetCommonData("boss_name", ""));
+        ObjText_SetText(bossText, GetCommonData("CURRENT_BOSS", ""));
         yield;
     }
 }
